@@ -6,9 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by jared on 5/18/16.
- */
 public class Hasher {
 
     private static final Logger LOG = Logger.getLogger(Hasher.class);
