@@ -10,4 +10,9 @@ public class Config {
     public Hasher hasher() {
         return new Hasher();
     }
+
+    @Bean
+    Tree tree() {
+        return new Tree();
+    }
 }
