@@ -1,21 +1,30 @@
 package demo;
 
-public class Node {
-
-    Node left, right, parent;
+public class Node implements BTree {
 
     String hash;
+    BTree left;
+    BTree right;
 
-    public Node(String hash, Node left, Node right, Node parent) {
-        this();
-        this.hash = hash;
+    public Node(String value, BTree left, BTree right) {
+        this(value);
         this.left = left;
         this.right = right;
-        this.parent = parent;
     }
 
-    public Node() {
-        super();
+    Node(String hash) {
+        this.hash = hash;
     }
 
+    public String getHash() {
+        return hash;
+    }
+
+    public BTree getLeft() {
+        return left;
+    }
+
+    public BTree getRight() {
+        return right;
+    }
 }

@@ -12,7 +12,7 @@ public class Config {
     }
 
     @Bean
-    Tree tree() {
-        return new Tree();
+    BlockChain tree() {
+        return new BlockChain();
     }
 }
