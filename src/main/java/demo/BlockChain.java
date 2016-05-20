@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-public class Tree {
+public class BlockChain {
 
     @Autowired
     private Hasher hasher;
