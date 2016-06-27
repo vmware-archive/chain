@@ -8,7 +8,7 @@ class Node implements Child {
     private Child right;
     private Node parent;
 
-    public void setValue(String s) {
+    void setValue(String s) {
         this.value = s;
     }
 
@@ -24,7 +24,7 @@ class Node implements Child {
         return parent;
     }
 
-    void setParent(Node parent) {
+    public void setParent(Node parent) {
         this.parent = parent;
     }
 
@@ -38,5 +38,19 @@ class Node implements Child {
 
     Child getRight() {
         return right;
+    }
+
+    //TODO better exception
+    void addChild(Child child) {
+        if (getLeft() != null && getRight() != null) {
+            throw new RuntimeException("already full!");
+        }
+        if (getLeft() == null) {
+            setLeft(child);
+        } else {
+            setRight(child);
+        }
+
+        child.setParent(this);
     }
 }

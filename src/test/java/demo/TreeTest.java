@@ -17,18 +17,12 @@ import static org.junit.Assert.assertNotNull;
 public class TreeTest {
 
     @Autowired
-    BlockChain tree;
+    private BlockChain tree;
 
     private static final String ENTRY_1 = "test 1";
     private static final String ENTRY_2 = "test 2";
     private static final String ENTRY_3 = "test 3";
     private static final String ENTRY_4 = "test 4";
-//
-//    private static final String HASH_1 = "f67213b122a5d442d2b93bda8cc45c564a70ec5d2a4e0e95bb585cf199869c98";
-//    private static final String HASH_2 = "dec2e4bc4992314a9c9a51bbd859e1b081b74178818c53c19d18d6f761f5d804";
-//
-//    @Autowired
-//    private ChainA chain;
 
     @Test
     @Ignore
@@ -72,10 +66,33 @@ public class TreeTest {
 
     @Test
     public void testTreeBuild() {
-        for(int i = 0; i < 20; i++) {
+        for(int i = 0; i < 7; i++) {
             String entry = "entry" + i;
             tree.addEntry(entry);
-            tree.print();
+//            tree.print();
         }
+        tree.print();
+    }
+
+    @Test
+    public void testLevels() {
+        tree.clear();
+
+        assertEquals(0, tree.levels());
+
+        tree.addEntry("1");
+        assertEquals(1, tree.levels());
+
+        tree.addEntry("2");
+        assertEquals(2, tree.levels());
+
+        tree.addEntry("3");
+        assertEquals(3, tree.levels());
+
+        tree.addEntry("4");
+        assertEquals(3, tree.levels());
+
+        tree.addEntry("5");
+        assertEquals(4, tree.levels());
     }
 }

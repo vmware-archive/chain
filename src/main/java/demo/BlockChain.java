@@ -6,18 +6,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class BlockChain {
+class BlockChain {
 
     @Autowired
     private Hasher hasher;
 
-    private final Map<String, Leaf> leaves = new HashMap<String, Leaf>();
+    private final Map<String, Leaf> leaves = new HashMap<>();
 
     private Node root;
 
     private Node lastAdded;
 
-    public String addEntry(String entry) {
+    void clear() {
+        leaves.clear();
+        root = null;
+        lastAdded = null;
+    }
+
+    String addEntry(String entry) {
 
         //hash the entry
         String hash = hasher.hash(entry);
@@ -30,8 +36,9 @@ public class BlockChain {
         String key = UUID.randomUUID().toString();
 
         //create a leaf for the entry
-        Leaf leaf = new Leaf(key, node);
-        node.setLeft(leaf);
+        Leaf leaf = new Leaf();
+        leaf.setValue(key);
+        node.addChild(leaf);
 
         //add the node to the tree
         addNode(node);
@@ -56,8 +63,11 @@ public class BlockChain {
             Node parent = findNextParent();
 
             //add the new node to the tree
-            n.setParent(parent);
+            parent.addChild(n);
         }
+
+        //calculate hashes from newly added node up to root
+        rehash(n);
 
         //hang onto the node for the next round
         lastAdded = n;
@@ -71,204 +81,96 @@ public class BlockChain {
         return (i != 0) && ((i & (i - 1)) == 0);
     }
 
-    private int levels() {
-        double d = Math.log(leaves.size());
-        return (int) Math.ceil(d);
+    int levels() {
+        return levels(leaves.size());
     }
 
-    private void addNewLevel(Node n) {
+    private int levels(int i) {
+        if (i <= 0) {
+            return 0;
+        }
+
+        //calculate base2 log of the number
+        double d = Math.log(i) / Math.log(2);
+
+        //round up to next whole number, and add 1 to represent root
+        return (int) Math.ceil(d) + 1;
+    }
+
+    private void addNewLevel(Node node) {
         //create a new node branch n levels deep
-        Node newRoot = createBranch(n, levels());
+        Node newRoot = createBranch(node, levels());
 
         //swap the new root's left to its right
         newRoot.setRight(newRoot.getLeft());
 
         //put the old root in the left of the newRoot
-        n.setLeft(root);
-        root = n;
+        newRoot.setLeft(root);
+
+        root = newRoot;
     }
 
     private Node createBranch(Node n, int levels) {
-        if (levels == 0) {
-            return n;
+        Node parent;
+        Node child = n;
+        for (int i = 0; i < levels; i++) {
+            parent = new Node();
+            parent.addChild(child);
+
+            child = parent;
         }
-        Node parent = new Node();
-        parent.setLeft(n);
-        n.setParent(parent);
-        return createBranch(parent, levels - 1);
+
+        return child;
     }
 
     private Node findNextParent() {
-        //start from last added and find an open slot
-        return findNextOpening(lastAdded, 0);
+        return findNextOpening(lastAdded);
     }
 
-    private Node findNextOpening(Node start, int levels) {
-        if (start.getParent().getRight() == null) {
-            //found a place to add something. Fill in nodes from here to leaf level
-            return createBranch(start, levels - 1);
+    private Node findNextOpening(Node start) {
+
+        Node n = start;
+        int level = 0;
+        while (n.getParent().getRight() != null) {
+            n = n.getParent();
+            level++;
+            if (n.equals(root)) {
+                throw new RuntimeException("hit root, not supposed to happen!");
+            }
         }
-        return findNextOpening(start.getParent(), levels + 1);
+
+        //if we'e at the lowest level, return the parent of this node
+        if (level == 0) {
+            return n.getParent();
+        }
+
+        //otherwise we're at a higher level,
+        // Fill in nodes from here to one above the leaf level.
+        Node bottom = new Node();
+        Node top = createBranch(bottom, level - 1);
+
+        n.getParent().addChild(top);
+
+        return bottom;
     }
 
-//    private void updateTree(Node leaf) {
-//        //special case, if this is the first leaf
-//        if (root == null) {
-//            root = leaf;
-////            mostRecent = leaf;
-////            root.left = leaf;
-////            root.right = leaf;
-//            return;
-//        }
-//
-//        //otherwise add the leaf to the "right" of the tree
-//
-//        if (insertToRight) {
-//            root = insertToRight(leaf.getHash(), root);
-//            insertToRight = false;
-//        } else {
-//            root = insertToLeft(leaf.getHash(), root);
-//            insertToRight = true;
-//        }
+    private void rehash(Node node) {
+        //node has no sibling, just inherit child hash
+        if (node.getRight() == null) {
+            node.setValue(node.getLeft().getValue());
+        } else {
+            //set hash to the hash of the concatenated child hashes
+            node.setValue(hasher.hash(node.getLeft().getValue() + node.getRight().getValue()));
+        }
 
-//        //if there is only one thing in the tree....
-//        if (root instanceof Leaf) {
-//            root = new Node(leaf.getValue(), leaf, new Leaf());
-//        } else // t must be a Node:
-//        {
-//            BinaryTree right_answer = insertToRight(v, t.right());
-//            // build answer tree by combining existing left subtree with newly
-//            //  constructed right subtree with existing value in a new Node:
-//            answer = new Node(t.value(), t.left(), right_answer);
-//        }
-//        return answer;
-//        // Notice that this method does _not_ change any links within tree,  t !
-//        //  Instead, it builds an  answer  tree that shares most of t's subtrees
-//        //  and has new Nodes along the path from  answer's  root to where
-//        //  v  is inserted.
-//
-//
-//        //build up tree starting with new leaf and most recent leaf
-//        createNodePath(mostRecent, leaf);
-
-    //recalculate hashes up the new path
-//        recalcHashes(leaf);
-//    }
-
-//    public Node insertToRight(String hash, Node existing) {
-//        //just one entry in existing?
-//        if (existing instanceof Leaf) {
-//            String newHash = hasher.hash(existing.getHash() + hash);
-//            return new Node(newHash, existing, new Leaf(hash));
-//        }
-//
-//        Node right = insertToRight(hash, existing.getRight());
-//
-//        // build answer tree by combining existing left subtree with newly
-//        //  constructed right subtree with existing value in a new Node:
-//        return new Node(existing.getHash(), existing.getLeft(), right);
-//
-//        // Notice that this method does _not_ change any links within tree,  t !
-//        //  Instead, it builds an  answer  tree that shares most of t's subtrees
-//        //  and has new Nodes along the path from  answer's  root to where
-//        //  v  is inserted.
-//    }
-
-//    public Node insertToLeft(String hash, Node existing) {
-//        //just one entry in existing?
-//        if (existing instanceof Leaf) {
-//            String newHash = hasher.hash(existing.getHash() + hash);
-//            return new Node(newHash, new Leaf(hash), existing);
-//        }
-//
-//        Node left = insertToLeft(hash, existing.getLeft());
-//
-//        // build answer tree by combining existing left subtree with newly
-//        //  constructed right subtree with existing value in a new Node:
-//        return new Node(existing.getHash(), left, existing.getRight());
-//
-//        // Notice that this method does _not_ change any links within tree,  t !
-//        //  Instead, it builds an  answer  tree that shares most of t's subtrees
-//        //  and has new Nodes along the path from  answer's  root to where
-//        //  v  is inserted.
-//    }
-
-//    //TODO first add/adjust brtanches and then recalc hashes?
-//    private void createNodePath(Node left, Node right) {
-//        //are we at the root level?
-//        if(root.equals(left)) {
-//            //is there room for right in root?
-//            if(root.right == null) {
-//                root.right = right;
-////                root.hash = hasher.hash(left.hash + right.hash);
-//                return;
-//            } else {
-//                //need a new root!
-//                Node newRoot = new Node();
-////                newRoot.hash = hasher.hash(left.hash + right.hash);
-//                newRoot.left = left;
-//                newRoot.right = right;
-//                left.parent = newRoot;
-//                right.parent = newRoot;
-//                root = newRoot;
-//                return;
-//            }
-//        }
-//
-//        //otherwise we are still working our way to the top
-//
-//        //is the left node is an only child?
-//        if(left.parent.right == null) {
-//            //in this case we need to pair it with the new node
-////            left.parent.hash = hasher.hash(left.hash + right.hash);
-//            right.parent = left.parent;
-//            right.parent.right = right;
-////            nodes.add(right);
-//        } else {
-//            //left node already has a sibling, so we need to create a new parent node
-//            Node newParent = new Node();
-//            newParent.left = right;
-//            right.parent = newParent;
-//
-//            //continue up the next tier
-//            createNodePath(left.parent, newParent);
-//        }
-//
-//
-//        //situation two, the most recent node already as a sibling
-//        //in this case we need to create anew branch for the new node.
-//
-//
-//
-//        //otherwise keep going
-////        createNodePath();
-//    }
-
-//    private void recalcHashes(Node node) {
-//        //special case: we are at the root and it's the only entry
-//        if(node.right == null && node.left == null) {
-//            return;
-//        }
-//
-//        //node has no sibling, just inherit child hash
-//        if(node.right == null) {
-//            node.hash = node.left.hash;
-//        } else {
-//            //set has to the hash of the concatenated child hashes
-//            node.hash = hasher.hash(node.left.hash + node.right.hash);
-//        }
-//
-//        //are we at the root?
-//        if(root.equals(node)) {
-//            return;
-//        } else {
-//            //keep going
-//            recalcHashes(node.parent);
-//        }
-//    }
+        if (!root.equals(node)) {
+            //keep going if we are not at the root yet
+            rehash(node.getParent());
+        }
+    }
 
     //is this the right entry for this id?
-    public boolean validate(String id, String entry) {
+    boolean validate(String id, String entry) {
         Leaf leaf = leaves.get(id);
         if (leaf == null) {
             return false;
@@ -277,7 +179,7 @@ public class BlockChain {
         return leaf.getParent().equals(hasher.hash(entry));
     }
 
-    public void print() {
+    void print() {
         System.out.println("\n");
         printContentsIndented("  ", root);
     }

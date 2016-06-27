@@ -1,9 +1,10 @@
 package demo;
 
-
-public interface Child {
+interface Child {
 
     Node getParent();
+
+    void setParent(Node parent);
 
     String getValue();
 }
