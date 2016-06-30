@@ -28,7 +28,7 @@ public class TreeTest {
     @Ignore
     public void testTree() {
 //        assertFalse(tree.validate("1234"));
-        assertFalse(tree.validate("1234", "foo"));
+        assertFalse(tree.verify("1234", "foo"));
 
         String e1 = tree.addEntry(ENTRY_1);
         assertNotNull(e1);
@@ -38,8 +38,8 @@ public class TreeTest {
 
 //        assertTrue(tree.validate(e1));
 //        assertTrue(tree.validate());
-        assertTrue(tree.validate(e1, ENTRY_1));
-        assertFalse(tree.validate(e1, "foo"));
+//        assertTrue(tree.validate(e1, ENTRY_1));
+//        assertFalse(tree.validate(e1, "foo"));
 
         String e2 = tree.addEntry(ENTRY_2);
         assertNotNull(e2);

@@ -1,11 +1,13 @@
 package demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Service
 class BlockChain {
 
     @Autowired
@@ -21,6 +23,15 @@ class BlockChain {
         leaves.clear();
         root = null;
         lastAdded = null;
+    }
+
+    Child getEntry(String key) {
+        return leaves.get(key);
+    }
+
+    Node all() {
+        print();
+        return root;
     }
 
     String addEntry(String entry) {
@@ -46,7 +57,7 @@ class BlockChain {
         //add the leaf to the leaves collection
         leaves.put(key, leaf);
 
-        //return the id of the leaf
+        //return the key to the new entry
         return key;
     }
 
@@ -170,7 +181,7 @@ class BlockChain {
     }
 
     //is this the right entry for this id?
-    boolean validate(String id, String entry) {
+    boolean verify(String id, String entry) {
         Leaf leaf = leaves.get(id);
         if (leaf == null) {
             return false;

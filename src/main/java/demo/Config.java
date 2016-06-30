@@ -10,9 +10,4 @@ public class Config {
     public Hasher hasher() {
         return new Hasher();
     }
-
-    @Bean
-    BlockChain tree() {
-        return new BlockChain();
-    }
 }

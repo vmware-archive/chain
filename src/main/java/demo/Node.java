@@ -1,5 +1,7 @@
 package demo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 class Node implements Child {
 
     private String value;
@@ -20,6 +22,7 @@ class Node implements Child {
         this.right = right;
     }
 
+    @JsonIgnore
     public Node getParent() {
         return parent;
     }
@@ -32,11 +35,11 @@ class Node implements Child {
         return value;
     }
 
-    Child getLeft() {
+    public Child getLeft() {
         return left;
     }
 
-    Child getRight() {
+    public Child getRight() {
         return right;
     }
 
