@@ -76,7 +76,17 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree")
-    public Node merkle() {
-        return merkleTree.all();
+    public MerkleTree merkle() {
+        return merkleTree;
+    }
+
+    @RequestMapping(value = "/merkleTree/load/{entries}")
+    public Child merkleLoad(@PathVariable String entries) {
+        return merkleTree.load(entries);
+    }
+
+    @RequestMapping(value = "/merkleTree/clear")
+    public void merkleClear() {
+        merkleTree.clear();
     }
 }

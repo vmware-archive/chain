@@ -81,18 +81,18 @@ public class MerkleTreeTest {
         assertEquals(0, tree.levels());
 
         tree.addEntry("1");
-        assertEquals(1, tree.levels());
+        assertEquals(0, tree.levels());
 
         tree.addEntry("2");
-        assertEquals(2, tree.levels());
+        assertEquals(1, tree.levels());
 
         tree.addEntry("3");
-        assertEquals(3, tree.levels());
+        assertEquals(2, tree.levels());
 
         tree.addEntry("4");
-        assertEquals(3, tree.levels());
+        assertEquals(2, tree.levels());
 
         tree.addEntry("5");
-        assertEquals(4, tree.levels());
+        assertEquals(3, tree.levels());
     }
 }
