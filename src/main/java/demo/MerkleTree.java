@@ -25,12 +25,12 @@ class MerkleTree {
         lastAdded = null;
     }
 
-    Child getEntry(String key) {
+    Leaf getEntry(String key) {
         return leaves.get(key);
     }
 
     Node all() {
-        print();
+//        print();
         return root;
     }
 
@@ -41,14 +41,14 @@ class MerkleTree {
 
         //create a new node for the leaf
         Node node = new Node();
-        node.setValue(hash);
+        node.setHash(hash);
 
         //create guid for leaf entry
         String key = UUID.randomUUID().toString();
 
         //create a leaf for the entry
         Leaf leaf = new Leaf();
-        leaf.setValue(key);
+        leaf.setKey(key);
         node.addChild(leaf);
 
         //add the node to the tree
@@ -168,10 +168,10 @@ class MerkleTree {
     private void rehash(Node node) {
         //node has no sibling, just inherit child hash
         if (node.getRight() == null) {
-            node.setValue(node.getLeft().getValue());
+            node.setHash(node.getLeft().getHash());
         } else {
             //set hash to the hash of the concatenated child hashes
-            node.setValue(hasher.hash(node.getLeft().getValue() + node.getRight().getValue()));
+            node.setHash(hasher.hash(node.getLeft().getHash() + node.getRight().getHash()));
         }
 
         if (!root.equals(node)) {
@@ -189,33 +189,33 @@ class MerkleTree {
 
         return leaf.getParent().equals(hasher.hash(entry));
     }
+//
+//    void print() {
+//        System.out.println("\n");
+//        printContentsIndented("  ", root);
+//    }
 
-    void print() {
-        System.out.println("\n");
-        printContentsIndented("  ", root);
-    }
-
-    private void printContentsIndented(String indent, Child c) {
-        if (c instanceof Leaf) {
-            System.out.println(indent + "Leaf: value = " + c.getValue());
-        } else {
-            Node n = (Node) c;
-            System.out.println(indent + "Node--------");
-            String new_indent = indent + "| ";
-            // the  toString  method concocts a string value for an object:
-            System.out.println(new_indent + "value = " + n.getValue());
-
-            if (n.getLeft() != null) {
-                System.out.println(new_indent + "left =");
-                printContentsIndented(new_indent + "  ", n.getLeft());
-            }
-
-            if (n.getRight() != null) {
-                System.out.println(new_indent + "right =");
-                printContentsIndented(new_indent + "  ", n.getRight());
-            }
-        }
-    }
+//    private void printContentsIndented(String indent, Child c) {
+//        if (c instanceof Leaf) {
+//            System.out.println(indent + "Leaf: value = " + c.getValue());
+//        } else {
+//            Node n = (Node) c;
+//            System.out.println(indent + "Node--------");
+//            String new_indent = indent + "| ";
+//            // the  toString  method concocts a string value for an object:
+//            System.out.println(new_indent + "value = " + n.getValue());
+//
+//            if (n.getLeft() != null) {
+//                System.out.println(new_indent + "left =");
+//                printContentsIndented(new_indent + "  ", n.getLeft());
+//            }
+//
+//            if (n.getRight() != null) {
+//                System.out.println(new_indent + "right =");
+//                printContentsIndented(new_indent + "  ", n.getRight());
+//            }
+//        }
+//    }
 
 //    //validate the tree, from the specified leaf up to the root
 //    public boolean validate(String id) {

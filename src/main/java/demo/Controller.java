@@ -66,7 +66,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/find/{key}")
-    public Child getMerkleEntry(@PathVariable String key) {
+    public Leaf getMerkleEntry(@PathVariable String key) {
         return merkleTree.getEntry(key);
     }
 

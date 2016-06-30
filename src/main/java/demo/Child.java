@@ -9,5 +9,5 @@ interface Child {
 
     void setParent(Node parent);
 
-    String getValue();
+    String getHash();
 }

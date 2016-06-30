@@ -33,7 +33,7 @@ public class MerkleTreeTest {
         String e1 = tree.addEntry(ENTRY_1);
         assertNotNull(e1);
 
-        tree.print();
+      //  tree.print();
 
 
 //        assertTrue(tree.validate(e1));
@@ -44,21 +44,21 @@ public class MerkleTreeTest {
         String e2 = tree.addEntry(ENTRY_2);
         assertNotNull(e2);
 
-        tree.print();
+    //    tree.print();
 //        assertTrue(tree.validate(e2));
 //        assertTrue(tree.validate());
 
         String e3 = tree.addEntry(ENTRY_3);
         assertNotNull(e3);
 
-        tree.print();
+     //   tree.print();
 //        assertTrue(tree.validate(e3));
 //        assertTrue(tree.validate());
 
         String e4 = tree.addEntry(ENTRY_4);
         assertNotNull(e4);
 
-        tree.print();
+  //      tree.print();
 
 //        assertTrue(tree.validate(e4));
 //        assertTrue(tree.validate());
@@ -71,7 +71,7 @@ public class MerkleTreeTest {
             tree.addEntry(entry);
 //            tree.print();
         }
-        tree.print();
+ //       tree.print();
     }
 
     @Test

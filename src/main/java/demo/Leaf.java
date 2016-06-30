@@ -1,23 +1,30 @@
 package demo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 class Leaf implements Child {
 
-    private String value;
+    private String key;
     private Node parent;
 
     public Node getParent() {
         return parent;
     }
 
-    public String getValue() {
-        return value;
+    public String getKey() {
+        return key;
     }
 
-    void setValue(String s) {
-        this.value = s;
+    public void setKey(String s) {
+        this.key = s;
     }
 
     public void setParent(Node parent) {
         this.parent = parent;
+    }
+
+    @JsonIgnore
+    public String getHash() {
+        return getKey();
     }
 }

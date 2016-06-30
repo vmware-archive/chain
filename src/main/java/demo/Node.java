@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 class Node implements Child {
 
-    private String value;
+    private String hash;
 
     private Child left;
     private Child right;
     private Node parent;
 
-    void setValue(String s) {
-        this.value = s;
+    void setHash(String s) {
+        this.hash = s;
     }
 
     void setLeft(Child left) {
@@ -31,8 +31,8 @@ class Node implements Child {
         this.parent = parent;
     }
 
-    public String getValue() {
-        return value;
+    public String getHash() {
+        return hash;
     }
 
     public Child getLeft() {
