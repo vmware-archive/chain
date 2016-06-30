@@ -9,74 +9,74 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-public class ChainController {
+public class Controller {
 
     @Autowired
-    private ChainA chainA;
+    private MapA mapA;
 
     @Autowired
-    private ChainB chainB;
+    private MapB mapB;
 
     @Autowired
-    private BlockChain merkle;
+    private MerkleTree merkleTree;
 
-    @RequestMapping(value = "/chainA/add/{entry}")
+    @RequestMapping(value = "/mapA/add/{entry}")
     public Object addChainAEntry(@PathVariable String entry) {
-        return chainA.addEntry(entry);
+        return mapA.addEntry(entry);
     }
 
-    @RequestMapping(value = "/chainA/find/{key}")
+    @RequestMapping(value = "/mapA/find/{key}")
     public String getChainAEntry(@PathVariable String key) {
-        return chainA.getEntry(key);
+        return mapA.getEntry(key);
     }
 
-    @RequestMapping(value = "/chainA/verify")
+    @RequestMapping(value = "/mapA/verify")
     public boolean verifyChainA(@RequestParam(value = "entry") String entry, @RequestParam(value = "hash") String hash) {
-        return chainA.verify(entry, hash);
+        return mapA.verify(entry, hash);
     }
 
-    @RequestMapping(value = "/chainA")
+    @RequestMapping(value = "/mapA")
     public Map<String, String> chainA() {
-        return chainA.all();
+        return mapA.all();
     }
 
-    @RequestMapping(value = "/chainB/add/{entry}")
+    @RequestMapping(value = "/mapB/add/{entry}")
     public Object addChainBEntry(@PathVariable String entry) {
-        return chainB.addEntry(entry);
+        return mapB.addEntry(entry);
     }
 
-    @RequestMapping(value = "/chainB/find/{key}")
+    @RequestMapping(value = "/mapB/find/{key}")
     public String getChainBEntry(@PathVariable String key) {
-        return chainB.getEntry(key);
+        return mapB.getEntry(key);
     }
 
-    @RequestMapping(value = "/chainB/verify")
+    @RequestMapping(value = "/mapB/verify")
     public boolean verifyChainB(@RequestParam(value = "entry") String entry, @RequestParam(value = "hash") String hash) {
-        return chainB.verify(entry, hash);
+        return mapB.verify(entry, hash);
     }
 
-    @RequestMapping(value = "/chainB")
+    @RequestMapping(value = "/mapB")
     public Map<String, String> chainB() {
-        return chainB.all();
+        return mapB.all();
     }
 
-    @RequestMapping(value = "/merkle/add/{entry}")
+    @RequestMapping(value = "/merkleTree/add/{entry}")
     public Object addMerkleEntry(@PathVariable String entry) {
-        return merkle.addEntry(entry);
+        return merkleTree.addEntry(entry);
     }
 
-    @RequestMapping(value = "/merkle/find/{key}")
+    @RequestMapping(value = "/merkleTree/find/{key}")
     public Child getMerkleEntry(@PathVariable String key) {
-        return merkle.getEntry(key);
+        return merkleTree.getEntry(key);
     }
 
-    @RequestMapping(value = "/merkle/verify")
+    @RequestMapping(value = "/merkleTree/verify")
     public boolean verifyMerkle(@RequestParam(value = "entry") String entry, @RequestParam(value = "hash") String hash) {
-        return merkle.verify(entry, hash);
+        return merkleTree.verify(entry, hash);
     }
 
-    @RequestMapping(value = "/merkle")
+    @RequestMapping(value = "/merkleTree")
     public Node merkle() {
-        return merkle.all();
+        return merkleTree.all();
     }
 }

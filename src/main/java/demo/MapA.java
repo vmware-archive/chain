@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-class ChainA {
+class MapA {
 
     @Autowired
     private Hasher hasher;

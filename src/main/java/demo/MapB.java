@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-class ChainB {
+class MapB {
 
     @Autowired
     private Hasher hasher;

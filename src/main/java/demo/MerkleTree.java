@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-class BlockChain {
+class MerkleTree {
 
     @Autowired
     private Hasher hasher;

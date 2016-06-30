@@ -14,10 +14,10 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-public class TreeTest {
+public class MerkleTreeTest {
 
     @Autowired
-    private BlockChain tree;
+    private MerkleTree tree;
 
     private static final String ENTRY_1 = "test 1";
     private static final String ENTRY_2 = "test 2";
