@@ -38,29 +38,25 @@ class MerkleTree {
         return root;
     }
 
+    private String createId() {
+        return UUID.randomUUID().toString();
+    }
+
     String addEntry(String entry) {
-
-        //hash the entry
-        String hash = hasher.hashAndEncode(entry);
-
-        //create guid for leaf entry
-        String key = UUID.randomUUID().toString();
-
         //create a leaf for the entry
-        Leaf leaf = new Leaf();
-        leaf.setKey(key);
+        Leaf leaf = new Leaf(createId(), hasher.hashAndEncode(entry));
 
-        //add the node to the tree
+        //add the leaf to the tree
         addLeaf(leaf);
 
         //add the leaf to the leaves collection
-        leaves.put(key, leaf);
+        leaves.put(leaf.getKey(), leaf);
 
-        return key;
+        return leaf.getKey();
     }
 
     private void addLeaf(Leaf l) {
-        //is there a root?
+        //no root?
         if (root == null) {
             root = l;
         } else if (treeIsFull()) {
@@ -105,7 +101,7 @@ class MerkleTree {
             return 0;
         }
 
-        //calculate base2 log of the number
+        //calculate base2 log
         double d = Math.log(i) / Math.log(2);
 
         //round up to next whole number
@@ -123,6 +119,7 @@ class MerkleTree {
 
         //put the old root in the left of the newRoot
         newRoot.setLeft(root);
+        root.setParent(newRoot);
 
         root = newRoot;
 
@@ -171,14 +168,22 @@ class MerkleTree {
         }
     }
 
-    private void rehash(Node node) {
-        //node has no sibling, just inherit child hash
+    private void setHash(Node node) {
+        //if node has no sibling, just inherit child hash
         if (node.getRight() == null) {
             node.setHash(node.getLeft().getHash());
         } else {
             //set hash to the hash of the concatenated child hashes
-            node.setHash(hasher.hashAndEncode(node.getLeft().getHash() + node.getRight().getHash()));
+            node.setHash(concatHash(node));
         }
+    }
+
+    private String concatHash(Node node) {
+        return hasher.hashAndEncode(node.getLeft().getHash() + node.getRight().getHash());
+    }
+
+    private void rehash(Node node) {
+        setHash(node);
 
         if (!root.equals(node)) {
             //keep going if we are not at the root yet
@@ -186,14 +191,60 @@ class MerkleTree {
         }
     }
 
-    //is this the right entry for this id?
+    //validate this entry up through the root
     boolean verify(String id, String entry) {
         Leaf leaf = leaves.get(id);
         if (leaf == null) {
             return false;
         }
 
-        return leaf.getParent().equals(hasher.hash(entry));
+        if(! verify(leaf, entry)) {
+            return false;
+        }
+
+        Node parent = leaf.getParent();
+        while (parent != null) {
+            if (!verify(parent)) {
+                return false;
+            }
+            parent = parent.getParent();
+        }
+
+        return true;
+    }
+
+    private boolean verify(Leaf l, String entry) {
+        if(l == null && entry == null) {
+            return false;
+        }
+
+        return l.getHash().equals(hasher.hashAndEncode(entry));
+    }
+
+    private boolean verify(Node n) {
+        if(n.getLeft() == null && n.getRight() == null) {
+            return true;
+        }
+
+        if(n.getRight() == null) {
+            return n.getLeft().getHash().equals(n.getHash());
+        }
+
+        return concatHash(n).equals(n.getHash());
+    }
+
+    //not exactly the most efficient way to do this.....
+    boolean verify() {
+        if(size() <= 1) {
+            return true;
+        }
+
+        for(Leaf l: leaves.values()) {
+            if( ! verify(l.getParent())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     Child load(String entries) {
@@ -205,7 +256,7 @@ class MerkleTree {
         }
 
         for (int j = 0; j < i; j++) {
-            addEntry(UUID.randomUUID().toString());
+            addEntry(createId());
         }
 
         return root;
