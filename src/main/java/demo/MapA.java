@@ -20,7 +20,7 @@ class MapA {
             return all();
         }
 
-        String key = hasher.hash(entry);
+        String key = hasher.hashAndEncode(entry);
         map.put(key, entry);
         return key;
     }

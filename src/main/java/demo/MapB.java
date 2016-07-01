@@ -21,7 +21,7 @@ class MapB {
         }
 
         String key = UUID.randomUUID().toString();
-        String value = hasher.hash(entry);
+        String value = hasher.hashAndEncode(entry);
 
         map.put(key, value);
         return key;
@@ -36,6 +36,6 @@ class MapB {
     }
 
     boolean verify(String entry, String key) {
-        return map.containsKey(key) && map.get(key).equals(hasher.hash(entry));
+        return map.containsKey(key) && map.get(key).equals(hasher.hashAndEncode(entry));
     }
 }

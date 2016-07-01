@@ -1,41 +1,23 @@
 package demo;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.codec.digest.DigestUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 public class Hasher {
 
-    private static final Logger LOG = Logger.getLogger(Hasher.class);
-
-    private MessageDigest md;
-
-    public String hash(String entry) {
-        if (entry == null) {
+    String hashAndEncode(String s) {
+        if(s == null) {
             return null;
         }
-
-        byte[] bytes = getDigest().digest(entry.getBytes(StandardCharsets.UTF_8));
-
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < bytes.length; i++) {
-            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-        }
-
-        return sb.toString();
+        return new String(encode(hash(s)));
     }
 
-    private MessageDigest getDigest() {
-        if (md == null) {
-            try {
-                md = MessageDigest.getInstance("SHA-256");
-            } catch (NoSuchAlgorithmException e) {
-                LOG.error("Error getting message digest", e);
-            }
-        }
+    byte[] hash(String s) {
+        return DigestUtils.getSha256Digest().digest(s.getBytes());
+    }
 
-        return md;
+    byte[] encode(byte[] b) {
+        return Base64.getEncoder().encode(b);
     }
 }

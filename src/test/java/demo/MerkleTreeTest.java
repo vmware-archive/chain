@@ -65,16 +65,6 @@ public class MerkleTreeTest {
     }
 
     @Test
-    public void testTreeBuild() {
-        for(int i = 0; i < 7; i++) {
-            String entry = "entry" + i;
-            tree.addEntry(entry);
-//            tree.print();
-        }
- //       tree.print();
-    }
-
-    @Test
     public void testLevels() {
         tree.clear();
 

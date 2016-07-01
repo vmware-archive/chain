@@ -19,15 +19,15 @@ public class HasherTest {
 
     @Test
     public void testHash() {
-        String hash = hasher.hash(null);
+        String hash = hasher.hashAndEncode(null);
         assertNull(hash);
 
-        hash = hasher.hash("");
+        hash = hasher.hashAndEncode("");
         assertNotNull(hash);
-        assertEquals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", hash);
+        assertEquals("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=", hash);
 
-        hash = hasher.hash("This is a test.");
+        hash = hasher.hashAndEncode("This is a test.");
         assertNotNull(hash);
-        assertEquals("a8a2f6ebe286697c527eb35a58b5539532e9b3ae3b64d4eb0a46fb657b41562c", hash);
+        assertEquals("qKL26+KGaXxSfrNaWLVTlTLps647ZNTrCkb7ZXtBViw=", hash);
     }
 }

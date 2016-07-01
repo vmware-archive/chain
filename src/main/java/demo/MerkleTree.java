@@ -41,7 +41,7 @@ class MerkleTree {
     String addEntry(String entry) {
 
         //hash the entry
-        String hash = hasher.hash(entry);
+        String hash = hasher.hashAndEncode(entry);
 
         //create guid for leaf entry
         String key = UUID.randomUUID().toString();
@@ -177,7 +177,7 @@ class MerkleTree {
             node.setHash(node.getLeft().getHash());
         } else {
             //set hash to the hash of the concatenated child hashes
-            node.setHash(hasher.hash(node.getLeft().getHash() + node.getRight().getHash()));
+            node.setHash(hasher.hashAndEncode(node.getLeft().getHash() + node.getRight().getHash()));
         }
 
         if (!root.equals(node)) {
