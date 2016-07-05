@@ -34,10 +34,6 @@ class MerkleTree {
         return leaves.get(key);
     }
 
-    Child all() {
-        return root;
-    }
-
     private String createId() {
         return UUID.randomUUID().toString();
     }
@@ -192,8 +188,8 @@ class MerkleTree {
     }
 
     //validate this entry up through the root
-    boolean verify(String id, String entry) {
-        Leaf leaf = leaves.get(id);
+    boolean verify(String key, String entry) {
+        Leaf leaf = leaves.get(key);
         if (leaf == null) {
             return false;
         }
@@ -214,7 +210,7 @@ class MerkleTree {
     }
 
     private boolean verify(Leaf l, String entry) {
-        if(l == null && entry == null) {
+        if(l == null || entry == null) {
             return false;
         }
 
@@ -247,10 +243,10 @@ class MerkleTree {
         return true;
     }
 
-    Child load(String entries) {
+    MerkleTree load(String numberOfEntries) {
         int i = 0;
         try {
-            i = Integer.parseInt(entries);
+            i = Integer.parseInt(numberOfEntries);
         } catch (NumberFormatException e) {
             //ignore
         }
@@ -259,6 +255,6 @@ class MerkleTree {
             addEntry(createId());
         }
 
-        return root;
+        return this;
     }
 }

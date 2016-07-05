@@ -4,7 +4,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Base64;
 
-public class Hasher {
+class Hasher {
 
     String hashAndEncode(String s) {
         if(s == null) {

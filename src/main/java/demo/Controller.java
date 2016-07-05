@@ -71,8 +71,8 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/verify")
-    public boolean verifyMerkle(@RequestParam(value = "entry") String entry, @RequestParam(value = "hash") String hash) {
-        return merkleTree.verify(entry, hash);
+    public boolean verifyMerkle(@RequestParam(value = "key") String key, @RequestParam(value = "entry") String entry) {
+        return merkleTree.verify(key, entry);
     }
 
     @RequestMapping(value = "/merkleTree")
@@ -80,9 +80,9 @@ public class Controller {
         return merkleTree;
     }
 
-    @RequestMapping(value = "/merkleTree/load/{entries}")
-    public Child merkleLoad(@PathVariable String entries) {
-        return merkleTree.load(entries);
+    @RequestMapping(value = "/merkleTree/load/{numberOfEntries}")
+    public MerkleTree merkleLoad(@PathVariable String numberOfEntries) {
+        return merkleTree.load(numberOfEntries);
     }
 
     @RequestMapping(value = "/merkleTree/clear")
