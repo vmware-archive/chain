@@ -2,36 +2,46 @@ package demo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Service
-@JsonPropertyOrder({ "size", "levels", "lastAdded", "root"})
+@JsonPropertyOrder({"size", "levels", "lastAdded", "root"})
 class MerkleTree {
 
-    @Autowired
-    private Hasher hasher;
+    private final Hasher hasher = new Hasher();
 
-    private final Map<String, Leaf> leaves = new HashMap<>();
+    private final Map<String, Leaf> leaves = new LinkedHashMap<>();
 
-    @JsonProperty
     private Child root;
 
-    @JsonProperty
-    private Leaf lastAdded;
-
     void clear() {
-        leaves.clear();
-        root = null;
-        lastAdded = null;
+        getLeaves().clear();
+        setRoot(null);
+    }
+
+    private Map<String, Leaf> getLeaves() {
+        return leaves;
+    }
+
+    @JsonProperty
+    Leaf getLastAdded() {
+        if(getLeaves().size() < 1) {
+            return null;
+        }
+        return (Leaf) getLeaves().values().toArray()[getLeaves().size() -1];
     }
 
     Leaf getEntry(String key) {
-        return leaves.get(key);
+        return  getLeaves().get(key);
     }
 
     private String createId() {
@@ -45,16 +55,16 @@ class MerkleTree {
         //add the leaf to the tree
         addLeaf(leaf);
 
-        //add the leaf to the leaves collection
-        leaves.put(leaf.getKey(), leaf);
+        //calculate hashes from newly added node up to root
+        rehash(leaf);
 
         return leaf.getKey();
     }
 
     private void addLeaf(Leaf l) {
         //no root?
-        if (root == null) {
-            root = l;
+        if (getRoot() == null) {
+            setRoot(l);
         } else if (treeIsFull()) {
             //we need a new root
             addNewLevel().addChild(l);
@@ -67,15 +77,16 @@ class MerkleTree {
             parent.addChild(l);
         }
 
-        //calculate hashes from newly added node up to root
-        rehash(l);
+        //add the leaf to the leaves collection
+        registerLeaf(l);
+    }
 
-        //hang onto the node for the next round
-        lastAdded = l;
+    void registerLeaf(Leaf l) {
+        getLeaves().put(l.getKey(), l);
     }
 
     private boolean treeIsFull() {
-        return isPowerOf2(leaves.size());
+        return isPowerOf2( getLeaves().size());
     }
 
     private boolean isPowerOf2(int i) {
@@ -89,7 +100,7 @@ class MerkleTree {
 
     @JsonProperty
     int size() {
-        return leaves.size();
+        return  getLeaves().size();
     }
 
     private int levels(int i) {
@@ -114,10 +125,9 @@ class MerkleTree {
         newRoot.setRight(newRoot.getLeft());
 
         //put the old root in the left of the newRoot
-        newRoot.setLeft(root);
-        root.setParent(newRoot);
-
-        root = newRoot;
+        newRoot.setLeft(getRoot());
+        getRoot().setParent(newRoot);
+        setRoot(newRoot);
 
         return node;
     }
@@ -136,12 +146,12 @@ class MerkleTree {
     }
 
     private Node findNextParent() {
-        Node n = lastAdded.getParent();
+        Node n = getLastAdded().getParent();
         int level = 0;
         while (n.getRight() != null) {
             n = n.getParent();
             level++;
-            if (n.equals(root)) {
+            if (n.equals(getRoot())) {
                 throw new RuntimeException("hit root, not supposed to happen!");
             }
         }
@@ -181,20 +191,29 @@ class MerkleTree {
     private void rehash(Node node) {
         setHash(node);
 
-        if (!root.equals(node)) {
+        if (! getRoot().equals(node)) {
             //keep going if we are not at the root yet
             rehash(node.getParent());
         }
     }
 
+    @JsonProperty
+    Child getRoot() {
+        return root;
+    }
+
+    private void setRoot(Child root) {
+        this.root = root;
+    }
+
     //validate this entry up through the root
     boolean verify(String key, String entry) {
-        Leaf leaf = leaves.get(key);
+        Leaf leaf =  getLeaves().get(key);
         if (leaf == null) {
             return false;
         }
 
-        if(! verify(leaf, entry)) {
+        if (!verify(leaf, entry)) {
             return false;
         }
 
@@ -210,7 +229,7 @@ class MerkleTree {
     }
 
     private boolean verify(Leaf l, String entry) {
-        if(l == null || entry == null) {
+        if (l == null || entry == null) {
             return false;
         }
 
@@ -218,11 +237,11 @@ class MerkleTree {
     }
 
     private boolean verify(Node n) {
-        if(n.getLeft() == null && n.getRight() == null) {
+        if (n.getLeft() == null && n.getRight() == null) {
             return true;
         }
 
-        if(n.getRight() == null) {
+        if (n.getRight() == null) {
             return n.getLeft().getHash().equals(n.getHash());
         }
 
@@ -231,19 +250,19 @@ class MerkleTree {
 
     //not exactly the most efficient way to do this.....
     boolean verify() {
-        if(size() <= 1) {
+        if (size() <= 1) {
             return true;
         }
 
-        for(Leaf l: leaves.values()) {
-            if( ! verify(l.getParent())) {
+        for (Leaf l :  getLeaves().values()) {
+            if (!verify(l.getParent())) {
                 return false;
             }
         }
         return true;
     }
 
-    MerkleTree load(String numberOfEntries) {
+    MerkleTree loadRandomEntries(String numberOfEntries) {
         int i = 0;
         try {
             i = Integer.parseInt(numberOfEntries);
@@ -256,5 +275,31 @@ class MerkleTree {
         }
 
         return this;
+    }
+
+    static MerkleTree load(String json) throws IOException {
+
+        MerkleTree mt = new MerkleTree();
+
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Leaf.class, new LeafDeserializer(mt));
+        module.addDeserializer(Node.class, new NodeDeserializer(mt));
+        module.addDeserializer(Child.class, new ChildDeserializer(mt));
+
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonParser jp = jsonFactory.createParser(json);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(module);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        jp.setCodec(mapper);
+        TreeNode jsonNode = jp.readValueAsTree().get("root");
+
+        String s = jsonNode.toString();
+
+        Child n = mapper.readValue(s, Child.class);
+
+        mt.setRoot(n);
+
+        return mt;
     }
 }

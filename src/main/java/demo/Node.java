@@ -1,20 +1,14 @@
 package demo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Node implements Child {
-
-    private String hash;
+class Node extends Child {
 
     private Child left;
-    private Child right;
-    private Node parent;
 
-    void setHash(String s) {
-        this.hash = s;
-    }
+    private Child right;
 
     void setLeft(Child left) {
         this.left = left;
@@ -24,28 +18,16 @@ class Node implements Child {
         this.right = right;
     }
 
-    @JsonIgnore
-    public Node getParent() {
-        return parent;
-    }
-
-    public void setParent(Node parent) {
-        this.parent = parent;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public Child getLeft() {
+    @JsonProperty
+    Child getLeft() {
         return left;
     }
 
-    public Child getRight() {
+    @JsonProperty
+    Child getRight() {
         return right;
     }
 
-    //TODO better exception
     void addChild(Child child) {
         if (getLeft() != null && getRight() != null) {
             throw new RuntimeException("already full!");
@@ -57,5 +39,24 @@ class Node implements Child {
         }
 
         child.setParent(this);
+    }
+
+    public int hashCode() {
+        if (getHash() == null) {
+            return -1;
+        }
+        return getHash().hashCode();
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if ((o == null) || (o.getClass() != this.getClass())) {
+            return false;
+        }
+
+        return hashCode() == o.hashCode();
     }
 }

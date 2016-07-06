@@ -1,37 +1,46 @@
 package demo;
 
-class Leaf implements Child {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+class Leaf extends Child {
 
     private String key;
-    private String hash;
-    private Node parent;
 
-    public Leaf(String key, String hash) {
+    Leaf(String key, String hash) {
+        this();
         setKey(key);
         setHash(hash);
     }
 
-    public String getKey() {
+    Leaf() {
+        super();
+    }
+
+    @JsonProperty
+    String getKey() {
         return key;
     }
 
-    private void setKey(String s) {
+    void setKey(String s) {
         this.key = s;
     }
 
-    public String getHash() {
-        return hash;
+    public int hashCode() {
+        if (getHash() == null) {
+            return -1;
+        }
+        return getHash().hashCode();
     }
 
-    private void setHash(String s) {
-        this.hash = s;
-    }
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
 
-    public Node getParent() {
-        return parent;
-    }
+        if ((o == null) || (o.getClass() != this.getClass())) {
+            return false;
+        }
 
-    public void setParent(Node parent) {
-        this.parent = parent;
+        return hashCode() == o.hashCode();
     }
 }

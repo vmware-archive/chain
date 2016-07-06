@@ -1,6 +1,5 @@
 package demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -9,8 +8,7 @@ import java.util.Map;
 @Service
 class MapA {
 
-    @Autowired
-    private Hasher hasher;
+    private final Hasher hasher = new Hasher();
 
     private final Map<String, String> map = new HashMap<>();
 

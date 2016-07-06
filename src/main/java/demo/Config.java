@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 public class Config {
 
     @Bean
-    public Hasher hasher() {
-        return new Hasher();
+    public MerkleTree tree() {
+        return new MerkleTree();
     }
 }

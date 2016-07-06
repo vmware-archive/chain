@@ -1,13 +1,28 @@
 package demo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-interface Child {
+abstract class Child {
+
+    private Node parent;
+    private String hash;
 
     @JsonIgnore
-    Node getParent();
+    Node getParent() {
+        return parent;
+    }
 
-    void setParent(Node parent);
+    void setParent(Node n) {
+        this.parent = n;
+    }
 
-    String getHash();
+    @JsonProperty
+    String getHash() {
+        return hash;
+    }
+
+    void setHash(String hash) {
+        this.hash = hash;
+    }
 }

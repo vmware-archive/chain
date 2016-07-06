@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -71,7 +72,15 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/verify")
-    public boolean verifyMerkle(@RequestParam(value = "key") String key, @RequestParam(value = "entry") String entry) {
+    public boolean verifyMerkle(@RequestParam(value = "key", required = false) String key, @RequestParam(value = "entry", required = false) String entry) {
+        if(key == null && entry == null) {
+            return merkleTree.verify();
+        }
+
+        if(key == null || entry == null) {
+            return false;
+        }
+
         return merkleTree.verify(key, entry);
     }
 
@@ -81,8 +90,8 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/load/{numberOfEntries}")
-    public MerkleTree merkleLoad(@PathVariable String numberOfEntries) {
-        return merkleTree.load(numberOfEntries);
+    public MerkleTree merkleLoad(@PathVariable String numberOfEntries) throws IOException {
+        return merkleTree.loadRandomEntries(numberOfEntries);
     }
 
     @RequestMapping(value = "/merkleTree/clear")

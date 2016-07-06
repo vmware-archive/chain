@@ -1,18 +1,21 @@
 package demo;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -30,9 +33,13 @@ public class MerkleTreeTest {
     public void testTree() {
         tree.clear();
         assertFalse(tree.verify("1234", "foo"));
+        assertNull(tree.getRoot());
+        assertNull(tree.getLastAdded());
 
         String e1 = tree.addEntry(ENTRY_1);
         assertNotNull(e1);
+        assertEquals(tree.getEntry(e1), tree.getRoot());
+        assertEquals(tree.getEntry(e1), tree.getLastAdded());
 
         assertTrue(tree.verify(e1, ENTRY_1));
         assertFalse(tree.verify(e1, "foo"));
@@ -42,17 +49,23 @@ public class MerkleTreeTest {
         assertNotNull(e2);
         assertTrue(tree.verify(e2, ENTRY_2));
         assertTrue(tree.verify());
+        assertEquals(tree.getEntry(e2), tree.getLastAdded());
+        assertNotNull(tree.getRoot());
 
         String e3 = tree.addEntry(ENTRY_3);
         assertNotNull(e3);
         assertTrue(tree.verify(e3, ENTRY_3));
         assertTrue(tree.verify());
+        assertEquals(tree.getEntry(e3), tree.getLastAdded());
+        assertNotNull(tree.getRoot());
 
         String e4 = tree.addEntry(ENTRY_4);
         assertNotNull(e4);
         assertTrue(tree.verify(e4, ENTRY_4));
         assertFalse(tree.verify(e4, "foo"));
         assertTrue(tree.verify());
+        assertEquals(tree.getEntry(e4), tree.getLastAdded());
+        assertNotNull(tree.getRoot());
     }
 
     @Test
@@ -95,5 +108,19 @@ public class MerkleTreeTest {
         for (String key : m.keySet()) {
             assertTrue(tree.verify(key, m.get(key)));
         }
+    }
+
+    @Test
+    public void testImport() throws IOException {
+        String json = getContents("valid.json");
+
+        MerkleTree mt = MerkleTree.load(json);
+        assertNotNull(mt.getRoot());
+        assertTrue(mt.verify());
+    }
+
+    private String getContents(String fileName) throws IOException {
+        URI u = new ClassPathResource(fileName).getURI();
+        return new String(Files.readAllBytes(Paths.get(u)));
     }
 }

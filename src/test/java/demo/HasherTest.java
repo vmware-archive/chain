@@ -2,7 +2,6 @@ package demo;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -14,8 +13,7 @@ import static org.junit.Assert.assertNotNull;
 @SpringApplicationConfiguration(classes = Application.class)
 public class HasherTest {
 
-    @Autowired
-    private Hasher hasher;
+    private final Hasher hasher = new Hasher();
 
     @Test
     public void testHash() {
