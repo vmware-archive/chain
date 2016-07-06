@@ -1,0 +1,77 @@
+{
+  "size": 9,
+  "levels": 4,
+  "lastAdded": {
+    "key": "3b6d41e8-3ee9-439b-b432-df4046042ad2",
+    "hash": "INCHQUUZQZtfaKx+UN5WymPGBM4y1oUVFLkSroy3lug="
+  },
+  "root": {
+    "hash": "AZcTYKXUdKmoypQdAMaK5hPFQSMDl3hipE2IsVfoRcc=",
+    "left": {
+      "hash": "02qotC4EsQjHPMy5qTkLgyi3CovK8MBMHuvSRDSz9TU=",
+      "left": {
+        "hash": "i221IzlcHF9xhzaJ11D1Z+tEZLJEMli13Vs5mMq6Qo8=",
+        "left": {
+          "hash": "irXmDhkD6zHoNgS3G9VaoYKFVk/u9q6kuO74IeQFjtw=",
+          "left": {
+            "key": "55e85850-9972-4c41-a4c0-b0f9535e18da",
+            "hash": "9g0x6LUjTkHjtIL87NYW5Y49EyqvrFFKD/Y7qiUFrDU="
+          },
+          "right": {
+            "key": "d7487ca2-ce59-4c46-a504-2e5711a42c48",
+            "hash": "m7qmodVPYQvW7o/2VOAcTIY06wNXyL6wu/V0leyiPvs="
+          }
+        },
+        "right": {
+          "hash": "RXICKfhrnYirAawEH4wJFgWxsMUb0eiWOe3/xNzD6X4=",
+          "left": {
+            "key": "682c57a8-acee-4cb9-b4f5-8b9520ba3990",
+            "hash": "0RrzqpvzJur5eVL1yHoeANkuCDafZW/IsA+LqujGZR4="
+          },
+          "right": {
+            "key": "ac87c182-eb01-409d-8042-821b0f95beb5",
+            "hash": "g1uGIEdRi250XuEcZjyrc/H1+YE9FveC0pDvv/B9buk="
+          }
+        }
+      },
+      "right": {
+        "hash": "O9M6atEkXJiGGRV84WtSNA58YLuLaiBNWY8lJugbRm4=",
+        "left": {
+          "hash": "r+i9lzmda2zaL+qkFI4IuFs87ie+AwiM+wCxmYAEbCM=",
+          "left": {
+            "key": "e495e70f-f7e9-428a-9e00-c815640e96c8",
+            "hash": "U1eXs3bIG416aULOF9gtlYJoAazEBZGbp+G9uVB0nR8="
+          },
+          "right": {
+            "key": "0d4b3695-5fef-48c3-ad89-5a8a03de75f8",
+            "hash": "RaSebeVJKJc3duyzjs/UMbK77GH2HhSZxNX/zwUKt4c="
+          }
+        },
+        "right": {
+          "hash": "/lJl99e6rz3QCzCCNDKA7BCWJugeVLOcPVXcHbTiwEg=",
+          "left": {
+            "key": "ca3397db-da48-4c6d-8331-dfa385d72a28",
+            "hash": "mbtu3FF6d/33WFpblmg6mGa3cZiYEALw5nrkKCUITg4="
+          },
+          "right": {
+            "key": "510f94b3-67f7-4ab4-837a-d696d868806c",
+            "hash": "xxxxxxjMtgGaST704VIcWn4M+uYEXi268Xm5EByJ1wl8RFRM0="
+          }
+        }
+      }
+    },
+    "right": {
+      "hash": "INCHQUUZQZtfaKx+UN5WymPGBM4y1oUVFLkSroy3lug=",
+      "left": {
+        "hash": "INCHQUUZQZtfaKx+UN5WymPGBM4y1oUVFLkSroy3lug=",
+        "left": {
+          "hash": "INCHQUUZQZtfaKx+UN5WymPGBM4y1oUVFLkSroy3lug=",
+          "left": {
+            "key": "3b6d41e8-3ee9-439b-b432-df4046042ad2",
+            "hash": "INCHQUUZQZtfaKx+UN5WymPGBM4y1oUVFLkSroy3lug="
+          }
+        }
+      }
+    }
+  }
+}

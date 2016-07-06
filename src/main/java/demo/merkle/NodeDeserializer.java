@@ -1,4 +1,4 @@
-package demo;
+package demo.merkle;
 
 
 import com.fasterxml.jackson.core.JsonParser;

@@ -1,8 +1,8 @@
-package demo;
+package demo.merkle;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-class Leaf extends Child {
+public class Leaf extends Child {
 
     private String key;
 
@@ -17,7 +17,7 @@ class Leaf extends Child {
     }
 
     @JsonProperty
-    String getKey() {
+    public String getKey() {
         return key;
     }
 

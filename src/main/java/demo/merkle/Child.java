@@ -1,4 +1,4 @@
-package demo;
+package demo.merkle;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +18,7 @@ abstract class Child {
     }
 
     @JsonProperty
-    String getHash() {
+    public String getHash() {
         return hash;
     }
 

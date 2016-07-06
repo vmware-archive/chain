@@ -1,5 +1,7 @@
 package demo;
 
+import demo.merkle.Leaf;
+import demo.merkle.MerkleTree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

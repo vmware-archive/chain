@@ -1,4 +1,4 @@
-package demo;
+package demo.merkle;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

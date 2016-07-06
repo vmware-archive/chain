@@ -1,5 +1,6 @@
-package demo;
+package demo.merkle;
 
+import demo.Application;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,11 +113,17 @@ public class MerkleTreeTest {
 
     @Test
     public void testImport() throws IOException {
-        String json = getContents("valid.json");
-
-        MerkleTree mt = MerkleTree.load(json);
+        MerkleTree mt = MerkleUtil.load(getContents("valid.json"));
         assertNotNull(mt.getRoot());
         assertTrue(mt.verify());
+
+        MerkleTree mt2 = MerkleUtil.load(getContents("invalidLeaf.json"));
+        assertNotNull(mt2.getRoot());
+        assertFalse(mt2.verify());
+
+        MerkleTree mt3 = MerkleUtil.load(getContents("invalidNode.json"));
+        assertNotNull(mt3.getRoot());
+        assertFalse(mt3.verify());
     }
 
     private String getContents(String fileName) throws IOException {

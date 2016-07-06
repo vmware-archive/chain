@@ -1,21 +1,15 @@
-package demo;
+package demo.merkle;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import demo.Hasher;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @JsonPropertyOrder({"size", "levels", "lastAdded", "root"})
-class MerkleTree {
+public class MerkleTree {
 
     private final Hasher hasher = new Hasher();
 
@@ -23,7 +17,7 @@ class MerkleTree {
 
     private Child root;
 
-    void clear() {
+    public void clear() {
         getLeaves().clear();
         setRoot(null);
     }
@@ -32,23 +26,22 @@ class MerkleTree {
         return leaves;
     }
 
-    @JsonProperty
     Leaf getLastAdded() {
-        if(getLeaves().size() < 1) {
+        if (getLeaves().size() < 1) {
             return null;
         }
-        return (Leaf) getLeaves().values().toArray()[getLeaves().size() -1];
+        return (Leaf) getLeaves().values().toArray()[getLeaves().size() - 1];
     }
 
-    Leaf getEntry(String key) {
-        return  getLeaves().get(key);
+    public Leaf getEntry(String key) {
+        return getLeaves().get(key);
     }
 
     private String createId() {
         return UUID.randomUUID().toString();
     }
 
-    String addEntry(String entry) {
+    public String addEntry(String entry) {
         //create a leaf for the entry
         Leaf leaf = new Leaf(createId(), hasher.hashAndEncode(entry));
 
@@ -86,7 +79,7 @@ class MerkleTree {
     }
 
     private boolean treeIsFull() {
-        return isPowerOf2( getLeaves().size());
+        return isPowerOf2(getLeaves().size());
     }
 
     private boolean isPowerOf2(int i) {
@@ -100,7 +93,7 @@ class MerkleTree {
 
     @JsonProperty
     int size() {
-        return  getLeaves().size();
+        return getLeaves().size();
     }
 
     private int levels(int i) {
@@ -191,7 +184,7 @@ class MerkleTree {
     private void rehash(Node node) {
         setHash(node);
 
-        if (! getRoot().equals(node)) {
+        if (!getRoot().equals(node)) {
             //keep going if we are not at the root yet
             rehash(node.getParent());
         }
@@ -202,13 +195,13 @@ class MerkleTree {
         return root;
     }
 
-    private void setRoot(Child root) {
+    void setRoot(Child root) {
         this.root = root;
     }
 
     //validate this entry up through the root
-    boolean verify(String key, String entry) {
-        Leaf leaf =  getLeaves().get(key);
+    public boolean verify(String key, String entry) {
+        Leaf leaf = getLeaves().get(key);
         if (leaf == null) {
             return false;
         }
@@ -249,12 +242,12 @@ class MerkleTree {
     }
 
     //not exactly the most efficient way to do this.....
-    boolean verify() {
+    public boolean verify() {
         if (size() <= 1) {
             return true;
         }
 
-        for (Leaf l :  getLeaves().values()) {
+        for (Leaf l : getLeaves().values()) {
             if (!verify(l.getParent())) {
                 return false;
             }
@@ -262,7 +255,7 @@ class MerkleTree {
         return true;
     }
 
-    MerkleTree loadRandomEntries(String numberOfEntries) {
+    public MerkleTree loadRandomEntries(String numberOfEntries) {
         int i = 0;
         try {
             i = Integer.parseInt(numberOfEntries);
@@ -275,31 +268,5 @@ class MerkleTree {
         }
 
         return this;
-    }
-
-    static MerkleTree load(String json) throws IOException {
-
-        MerkleTree mt = new MerkleTree();
-
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Leaf.class, new LeafDeserializer(mt));
-        module.addDeserializer(Node.class, new NodeDeserializer(mt));
-        module.addDeserializer(Child.class, new ChildDeserializer(mt));
-
-        JsonFactory jsonFactory = new JsonFactory();
-        JsonParser jp = jsonFactory.createParser(json);
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(module);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        jp.setCodec(mapper);
-        TreeNode jsonNode = jp.readValueAsTree().get("root");
-
-        String s = jsonNode.toString();
-
-        Child n = mapper.readValue(s, Child.class);
-
-        mt.setRoot(n);
-
-        return mt;
     }
 }
