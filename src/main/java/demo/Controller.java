@@ -3,6 +3,7 @@ package demo;
 import demo.merkle.Leaf;
 import demo.merkle.MerkleException;
 import demo.merkle.MerkleTree;
+import demo.merkle.MerkleUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,9 @@ public class Controller {
 
     @Autowired
     private MerkleTree merkleTree;
+
+    @Autowired
+    private MerkleUtil merkleUtil;
 
     @RequestMapping(value = "/mapA/add/{entry}")
     public Object addChainAEntry(@PathVariable String entry) {
@@ -93,7 +97,8 @@ public class Controller {
 
     @RequestMapping(value = "/merkleTree/load/{numberOfEntries}")
     public MerkleTree merkleLoad(@PathVariable String numberOfEntries) throws MerkleException {
-        return merkleTree.loadRandomEntries(numberOfEntries);
+        merkleUtil.loadRandomEntries(numberOfEntries, merkleTree);
+        return merkleTree;
     }
 
     @RequestMapping(value = "/merkleTree/clear")

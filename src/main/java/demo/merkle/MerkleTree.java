@@ -3,15 +3,19 @@ package demo.merkle;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import demo.Hasher;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @JsonPropertyOrder({"size", "levels", "lastAdded", "root"})
 public class MerkleTree {
 
-    private final Hasher hasher = new Hasher();
+    @Autowired
+    private Hasher hasher = new Hasher();
+
+    @Autowired
+    private MerkleUtil merkleUtil;
 
     private final Map<String, Leaf> leaves = new LinkedHashMap<>();
 
@@ -37,13 +41,9 @@ public class MerkleTree {
         return getLeaves().get(key);
     }
 
-    private String createId() {
-        return UUID.randomUUID().toString();
-    }
-
     public String addEntry(String entry) throws MerkleException {
         //create a leaf for the entry
-        Leaf leaf = new Leaf(createId(), hasher.hashAndEncode(entry));
+        Leaf leaf = new Leaf(hasher.createId(), hasher.hashAndEncode(entry));
 
         //add the leaf to the tree
         addLeaf(leaf);
@@ -79,33 +79,17 @@ public class MerkleTree {
     }
 
     private boolean treeIsFull() {
-        return isPowerOf2(getLeaves().size());
-    }
-
-    private boolean isPowerOf2(int i) {
-        return (i != 0) && ((i & (i - 1)) == 0);
+        return merkleUtil.isPowerOf2(getLeaves().size());
     }
 
     @JsonProperty
     int levels() {
-        return levels(size());
+        return merkleUtil.levels(size());
     }
 
     @JsonProperty
     int size() {
         return getLeaves().size();
-    }
-
-    private int levels(int i) {
-        if (i <= 0) {
-            return 0;
-        }
-
-        //calculate base2 log
-        double d = Math.log(i) / Math.log(2);
-
-        //round up to next whole number
-        return (int) Math.ceil(d);
     }
 
     private Node addNewLevel() throws MerkleException {
@@ -257,20 +241,5 @@ public class MerkleTree {
             verify(l.getParent());
         }
         return true;
-    }
-
-    public MerkleTree loadRandomEntries(String numberOfEntries) throws MerkleException {
-        int i = 0;
-        try {
-            i = Integer.parseInt(numberOfEntries);
-        } catch (NumberFormatException e) {
-            //ignore
-        }
-
-        for (int j = 0; j < i; j++) {
-            addEntry(createId());
-        }
-
-        return this;
     }
 }

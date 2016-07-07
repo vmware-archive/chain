@@ -3,6 +3,7 @@ package demo;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Base64;
+import java.util.UUID;
 
 public class Hasher {
 
@@ -19,5 +20,9 @@ public class Hasher {
 
     private byte[] encode(byte[] b) {
         return Base64.getEncoder().encode(b);
+    }
+
+    public String createId() {
+        return UUID.randomUUID().toString();
     }
 }

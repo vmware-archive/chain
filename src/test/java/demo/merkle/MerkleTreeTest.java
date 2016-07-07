@@ -1,6 +1,7 @@
 package demo.merkle;
 
 import demo.Application;
+import demo.Hasher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class MerkleTreeTest {
 
     @Autowired
     private MerkleTree tree;
+
+    @Autowired
+    private MerkleUtil merkleUtil;
 
     private static final String ENTRY_1 = "test 1";
     private static final String ENTRY_2 = "test 2";
@@ -115,7 +119,7 @@ public class MerkleTreeTest {
     public void testImport() throws IOException {
 
         try {
-            MerkleTree mt = MerkleUtil.load(getContents("valid.json"));
+            MerkleTree mt = merkleUtil.load(getContents("valid.json"));
             assertNotNull(mt.getRoot());
             assertTrue(mt.verify());
         } catch (MerkleException e) {
@@ -123,7 +127,7 @@ public class MerkleTreeTest {
         }
 
         try {
-            MerkleTree mt2 = MerkleUtil.load(getContents("invalidLeaf.json"));
+            MerkleTree mt2 = merkleUtil.load(getContents("invalidLeaf.json"));
             assertNotNull(mt2.getRoot());
             assertFalse(mt2.verify());
             fail("should have thrown an exception.");
@@ -132,7 +136,7 @@ public class MerkleTreeTest {
         }
 
         try {
-            MerkleTree mt3 = MerkleUtil.load(getContents("invalidNode.json"));
+            MerkleTree mt3 = merkleUtil.load(getContents("invalidNode.json"));
             assertNotNull(mt3.getRoot());
             assertFalse(mt3.verify());
             fail("should have thrown an exception.");

@@ -6,12 +6,19 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import demo.Hasher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-class MerkleUtil {
+@Component
+public class MerkleUtil {
 
-    static MerkleTree load(String json) throws MerkleException {
+    @Autowired
+    private Hasher hasher;
+
+    public MerkleTree load(String json) throws MerkleException {
 
         MerkleTree mt = new MerkleTree();
         Child n;
@@ -39,5 +46,34 @@ class MerkleUtil {
 
         mt.setRoot(n);
         return mt;
+    }
+
+    public boolean isPowerOf2(int i) {
+        return (i != 0) && ((i & (i - 1)) == 0);
+    }
+
+    public int levels(int size) {
+        if (size <= 0) {
+            return 0;
+        }
+
+        //calculate base2 log
+        double d = Math.log(size) / Math.log(2);
+
+        //round up to next whole number
+        return (int) Math.ceil(d);
+    }
+
+    public void loadRandomEntries(String numberOfEntries, MerkleTree tree) throws MerkleException {
+        int i = 0;
+        try {
+            i = Integer.parseInt(numberOfEntries);
+        } catch (NumberFormatException e) {
+            //ignore
+        }
+
+        for (int j = 0; j < i; j++) {
+            tree.addEntry(hasher.createId());
+        }
     }
 }
