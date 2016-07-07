@@ -37,7 +37,14 @@ public class MerkleTreeTest {
     @Test
     public void testTree() throws MerkleException {
         tree.clear();
-        assertFalse(tree.verify("1234", "foo"));
+
+        try {
+            tree.verify("1234", "foo");
+            fail("expected exception");
+        } catch (MerkleException e) {
+            //expected
+        }
+
         assertNull(tree.getRoot());
         assertNull(tree.getLastAdded());
 
@@ -47,7 +54,14 @@ public class MerkleTreeTest {
         assertEquals(tree.getEntry(e1), tree.getLastAdded());
 
         assertTrue(tree.verify(e1, ENTRY_1));
-        assertFalse(tree.verify(e1, "foo"));
+
+        try {
+            tree.verify(e1, "foo");
+            fail("expected exception");
+        } catch (MerkleException e) {
+            //expected
+        }
+
         assertTrue(tree.verify());
 
         String e2 = tree.addEntry(ENTRY_2);
@@ -67,7 +81,14 @@ public class MerkleTreeTest {
         String e4 = tree.addEntry(ENTRY_4);
         assertNotNull(e4);
         assertTrue(tree.verify(e4, ENTRY_4));
-        assertFalse(tree.verify(e4, "foo"));
+
+        try {
+            tree.verify(e4, "foo");
+            fail("expected exception");
+        } catch (MerkleException e) {
+            //expected
+        }
+
         assertTrue(tree.verify());
         assertEquals(tree.getEntry(e4), tree.getLastAdded());
         assertNotNull(tree.getRoot());

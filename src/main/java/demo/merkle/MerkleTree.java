@@ -3,7 +3,6 @@ package demo.merkle;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import demo.Hasher;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,11 +10,9 @@ import java.util.Map;
 @JsonPropertyOrder({"size", "levels", "lastAdded", "root"})
 public class MerkleTree {
 
-    @Autowired
     private Hasher hasher = new Hasher();
 
-    @Autowired
-    private MerkleUtil merkleUtil;
+    private MerkleUtil merkleUtil = new MerkleUtil();
 
     private final Map<String, Leaf> leaves = new LinkedHashMap<>();
 
@@ -79,7 +76,7 @@ public class MerkleTree {
     }
 
     private boolean treeIsFull() {
-        return merkleUtil.isPowerOf2(getLeaves().size());
+        return merkleUtil.isPowerOf2(size());
     }
 
     @JsonProperty
@@ -88,7 +85,7 @@ public class MerkleTree {
     }
 
     @JsonProperty
-    int size() {
+    private int size() {
         return getLeaves().size();
     }
 
@@ -157,12 +154,8 @@ public class MerkleTree {
             node.setHash(node.getLeft().getHash());
         } else {
             //set hash to the hash of the concatenated child hashes
-            node.setHash(concatHash(node));
+            node.setHash(merkleUtil.concatHash(node));
         }
-    }
-
-    private String concatHash(Node node) {
-        return hasher.hashAndEncode(node.getLeft().getHash() + node.getRight().getHash());
     }
 
     private void rehash(Node node) {
@@ -183,54 +176,6 @@ public class MerkleTree {
         this.root = root;
     }
 
-    //validate this entry up through the root
-    public boolean verify(String key, String entry) throws MerkleException {
-        Leaf leaf = getLeaves().get(key);
-        if (leaf == null) {
-            return false;
-        }
-
-        if (!verify(leaf, entry)) {
-            return false;
-        }
-
-        Node parent = leaf.getParent();
-        while (parent != null) {
-            verify(parent);
-            parent = parent.getParent();
-        }
-
-        return true;
-    }
-
-    private boolean verify(Leaf l, String entry) {
-        if (l == null || entry == null) {
-            return false;
-        }
-
-        return l.getHash().equals(hasher.hashAndEncode(entry));
-    }
-
-    private boolean verify(Node n) throws MerkleException {
-        if (n.getLeft() == null && n.getRight() == null) {
-            return true;
-        }
-
-        if (n.getRight() == null) {
-            if (!n.getLeft().getHash().equals(n.getHash())) {
-                throw new MerkleException("validation failed: " + n);
-            } else {
-                return true;
-            }
-        }
-
-        if (!concatHash(n).equals(n.getHash())) {
-            throw new MerkleException("validation failed: " + n);
-        }
-
-        return true;
-    }
-
     //not exactly the most efficient way to do this.....
     public boolean verify() throws MerkleException {
         if (size() <= 1) {
@@ -238,8 +183,30 @@ public class MerkleTree {
         }
 
         for (Leaf l : getLeaves().values()) {
-            verify(l.getParent());
+            merkleUtil.verify(l.getParent());
         }
+        return true;
+    }
+
+    //validate this entry up through the root
+    public boolean verify(String key, String entry) throws MerkleException {
+        if (key == null || entry == null) {
+            throw new MerkleException("null key or entry not allowed.");
+        }
+
+        Leaf leaf = getLeaves().get(key);
+        if (leaf == null) {
+            throw new MerkleException("no entry found for key: " + key);
+        }
+
+        merkleUtil.verify(leaf, entry);
+
+        Node parent = leaf.getParent();
+        while (parent != null) {
+            merkleUtil.verify(parent);
+            parent = parent.getParent();
+        }
+
         return true;
     }
 }

@@ -11,9 +11,4 @@ public class Config {
     public MerkleTree tree() {
         return new MerkleTree();
     }
-
-    @Bean
-    public Hasher hasher() {
-        return new Hasher();
-    }
 }

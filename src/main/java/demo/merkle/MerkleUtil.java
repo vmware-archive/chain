@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import demo.Hasher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -15,10 +14,9 @@ import java.io.IOException;
 @Component
 public class MerkleUtil {
 
-    @Autowired
-    private Hasher hasher;
+    private Hasher hasher = new Hasher();
 
-    public MerkleTree load(String json) throws MerkleException {
+    MerkleTree load(String json) throws MerkleException {
 
         MerkleTree mt = new MerkleTree();
         Child n;
@@ -48,11 +46,11 @@ public class MerkleUtil {
         return mt;
     }
 
-    public boolean isPowerOf2(int i) {
+    boolean isPowerOf2(int i) {
         return (i != 0) && ((i & (i - 1)) == 0);
     }
 
-    public int levels(int size) {
+    int levels(int size) {
         if (size <= 0) {
             return 0;
         }
@@ -75,5 +73,33 @@ public class MerkleUtil {
         for (int j = 0; j < i; j++) {
             tree.addEntry(hasher.createId());
         }
+    }
+
+    void verify(Leaf l, String entry) throws MerkleException {
+        if (!l.getHash().equals(hasher.hashAndEncode(entry))) {
+            throw new MerkleException("hash mismatch for entry: " + entry);
+        }
+    }
+
+    public void verify(Node n) throws MerkleException {
+        if (n.getLeft() == null && n.getRight() == null && n.getHash() == null) {
+            return;
+        }
+
+        if (n.getRight() == null) {
+            if (!n.getLeft().getHash().equals(n.getHash())) {
+                throw new MerkleException("child hash inheritance verification failed: " + n);
+            } else {
+                return;
+            }
+        }
+
+        if (!concatHash(n).equals(n.getHash())) {
+            throw new MerkleException("hash concatenation failed: " + n);
+        }
+    }
+
+    public String concatHash(Node node) {
+        return hasher.hashAndEncode(node.getLeft().getHash() + node.getRight().getHash());
     }
 }
