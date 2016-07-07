@@ -31,7 +31,7 @@ public class MerkleTreeTest {
     private static final String ENTRY_4 = "test 4";
 
     @Test
-    public void testTree() {
+    public void testTree() throws MerkleException {
         tree.clear();
         assertFalse(tree.verify("1234", "foo"));
         assertNull(tree.getRoot());
@@ -70,7 +70,7 @@ public class MerkleTreeTest {
     }
 
     @Test
-    public void testLevels() {
+    public void testLevels() throws MerkleException {
         tree.clear();
 
         assertEquals(0, tree.levels());
@@ -92,7 +92,7 @@ public class MerkleTreeTest {
     }
 
     @Test
-    public void testValidation() {
+    public void testValidation() throws MerkleException {
         tree.clear();
         List<String> entries = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
@@ -113,17 +113,32 @@ public class MerkleTreeTest {
 
     @Test
     public void testImport() throws IOException {
-        MerkleTree mt = MerkleUtil.load(getContents("valid.json"));
-        assertNotNull(mt.getRoot());
-        assertTrue(mt.verify());
 
-        MerkleTree mt2 = MerkleUtil.load(getContents("invalidLeaf.json"));
-        assertNotNull(mt2.getRoot());
-        assertFalse(mt2.verify());
+        try {
+            MerkleTree mt = MerkleUtil.load(getContents("valid.json"));
+            assertNotNull(mt.getRoot());
+            assertTrue(mt.verify());
+        } catch (MerkleException e) {
+            fail("should not have thrown an exception.");
+        }
 
-        MerkleTree mt3 = MerkleUtil.load(getContents("invalidNode.json"));
-        assertNotNull(mt3.getRoot());
-        assertFalse(mt3.verify());
+        try {
+            MerkleTree mt2 = MerkleUtil.load(getContents("invalidLeaf.json"));
+            assertNotNull(mt2.getRoot());
+            assertFalse(mt2.verify());
+            fail("should have thrown an exception.");
+        } catch (MerkleException e) {
+            //wrong
+        }
+
+        try {
+            MerkleTree mt3 = MerkleUtil.load(getContents("invalidNode.json"));
+            assertNotNull(mt3.getRoot());
+            assertFalse(mt3.verify());
+            fail("should have thrown an exception.");
+        } catch (MerkleException e) {
+            //wrong
+        }
     }
 
     private String getContents(String fileName) throws IOException {

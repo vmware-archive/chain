@@ -1,6 +1,7 @@
 package demo;
 
 import demo.merkle.Leaf;
+import demo.merkle.MerkleException;
 import demo.merkle.MerkleTree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -64,7 +64,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/add/{entry}")
-    public Object addMerkleEntry(@PathVariable String entry) {
+    public Object addMerkleEntry(@PathVariable String entry) throws MerkleException {
         return merkleTree.addEntry(entry);
     }
 
@@ -74,12 +74,12 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/verify")
-    public boolean verifyMerkle(@RequestParam(value = "key", required = false) String key, @RequestParam(value = "entry", required = false) String entry) {
-        if(key == null && entry == null) {
+    public boolean verifyMerkle(@RequestParam(value = "key", required = false) String key, @RequestParam(value = "entry", required = false) String entry) throws MerkleException {
+        if (key == null && entry == null) {
             return merkleTree.verify();
         }
 
-        if(key == null || entry == null) {
+        if (key == null || entry == null) {
             return false;
         }
 
@@ -92,7 +92,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/load/{numberOfEntries}")
-    public MerkleTree merkleLoad(@PathVariable String numberOfEntries) throws IOException {
+    public MerkleTree merkleLoad(@PathVariable String numberOfEntries) throws MerkleException {
         return merkleTree.loadRandomEntries(numberOfEntries);
     }
 

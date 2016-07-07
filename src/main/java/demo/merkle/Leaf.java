@@ -43,4 +43,8 @@ public class Leaf extends Child {
 
         return hashCode() == o.hashCode();
     }
+
+    public String toString() {
+        return "Leaf:key=" + getKey() + ",hash=" + getHash();
+    }
 }

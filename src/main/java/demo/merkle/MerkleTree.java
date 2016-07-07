@@ -41,7 +41,7 @@ public class MerkleTree {
         return UUID.randomUUID().toString();
     }
 
-    public String addEntry(String entry) {
+    public String addEntry(String entry) throws MerkleException {
         //create a leaf for the entry
         Leaf leaf = new Leaf(createId(), hasher.hashAndEncode(entry));
 
@@ -54,7 +54,7 @@ public class MerkleTree {
         return leaf.getKey();
     }
 
-    private void addLeaf(Leaf l) {
+    private void addLeaf(Leaf l) throws MerkleException {
         //no root?
         if (getRoot() == null) {
             setRoot(l);
@@ -108,7 +108,7 @@ public class MerkleTree {
         return (int) Math.ceil(d);
     }
 
-    private Node addNewLevel() {
+    private Node addNewLevel() throws MerkleException {
         Node node = new Node();
 
         //create a new node branch n levels deep
@@ -125,7 +125,7 @@ public class MerkleTree {
         return node;
     }
 
-    private Node createBranch(Node n, int levels) {
+    private Node createBranch(Node n, int levels) throws MerkleException {
         Node parent;
         Node child = n;
         for (int i = 0; i < levels; i++) {
@@ -138,14 +138,14 @@ public class MerkleTree {
         return child;
     }
 
-    private Node findNextParent() {
+    private Node findNextParent() throws MerkleException {
         Node n = getLastAdded().getParent();
         int level = 0;
         while (n.getRight() != null) {
             n = n.getParent();
             level++;
             if (n.equals(getRoot())) {
-                throw new RuntimeException("hit root, not supposed to happen!");
+                throw new MerkleException("hit root, not supposed to happen!");
             }
         }
 
@@ -200,7 +200,7 @@ public class MerkleTree {
     }
 
     //validate this entry up through the root
-    public boolean verify(String key, String entry) {
+    public boolean verify(String key, String entry) throws MerkleException {
         Leaf leaf = getLeaves().get(key);
         if (leaf == null) {
             return false;
@@ -212,9 +212,7 @@ public class MerkleTree {
 
         Node parent = leaf.getParent();
         while (parent != null) {
-            if (!verify(parent)) {
-                return false;
-            }
+            verify(parent);
             parent = parent.getParent();
         }
 
@@ -229,33 +227,39 @@ public class MerkleTree {
         return l.getHash().equals(hasher.hashAndEncode(entry));
     }
 
-    private boolean verify(Node n) {
+    private boolean verify(Node n) throws MerkleException {
         if (n.getLeft() == null && n.getRight() == null) {
             return true;
         }
 
         if (n.getRight() == null) {
-            return n.getLeft().getHash().equals(n.getHash());
+            if (!n.getLeft().getHash().equals(n.getHash())) {
+                throw new MerkleException("validation failed: " + n);
+            } else {
+                return true;
+            }
         }
 
-        return concatHash(n).equals(n.getHash());
+        if (!concatHash(n).equals(n.getHash())) {
+            throw new MerkleException("validation failed: " + n);
+        }
+
+        return true;
     }
 
     //not exactly the most efficient way to do this.....
-    public boolean verify() {
+    public boolean verify() throws MerkleException {
         if (size() <= 1) {
             return true;
         }
 
         for (Leaf l : getLeaves().values()) {
-            if (!verify(l.getParent())) {
-                return false;
-            }
+            verify(l.getParent());
         }
         return true;
     }
 
-    public MerkleTree loadRandomEntries(String numberOfEntries) {
+    public MerkleTree loadRandomEntries(String numberOfEntries) throws MerkleException {
         int i = 0;
         try {
             i = Integer.parseInt(numberOfEntries);

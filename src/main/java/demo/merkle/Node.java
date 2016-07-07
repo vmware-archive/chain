@@ -28,9 +28,9 @@ class Node extends Child {
         return right;
     }
 
-    void addChild(Child child) {
+    void addChild(Child child) throws MerkleException {
         if (getLeft() != null && getRight() != null) {
-            throw new RuntimeException("already full!");
+            throw new MerkleException("already full!");
         }
         if (getLeft() == null) {
             setLeft(child);
@@ -58,5 +58,17 @@ class Node extends Child {
         }
 
         return hashCode() == o.hashCode();
+    }
+
+    public String toString() {
+        String s = "Node:hash=" + getHash();
+        if(getLeft() != null) {
+            s += ",left=" + getLeft().getHash();
+        }
+
+        if(getRight() != null) {
+            s += ",right=" + getRight().getHash();
+        }
+        return s;
     }
 }
