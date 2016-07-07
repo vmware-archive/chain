@@ -1,21 +1,14 @@
 package demo.merkle;
 
 import demo.Application;
-import demo.Hasher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
@@ -25,9 +18,6 @@ public class MerkleTreeTest {
 
     @Autowired
     private MerkleTree tree;
-
-    @Autowired
-    private MerkleUtil merkleUtil;
 
     private static final String ENTRY_1 = "test 1";
     private static final String ENTRY_2 = "test 2";
@@ -45,14 +35,9 @@ public class MerkleTreeTest {
             //expected
         }
 
-        assertNull(tree.getRoot());
-        assertNull(tree.getLastAdded());
-
         String e1 = tree.addEntry(ENTRY_1);
         assertNotNull(e1);
-        assertEquals(tree.getEntry(e1), tree.getRoot());
-        assertEquals(tree.getEntry(e1), tree.getLastAdded());
-
+        assertNotNull(tree.getEntry(e1));
         assertTrue(tree.verify(e1, ENTRY_1));
 
         try {
@@ -68,14 +53,12 @@ public class MerkleTreeTest {
         assertNotNull(e2);
         assertTrue(tree.verify(e2, ENTRY_2));
         assertTrue(tree.verify());
-        assertEquals(tree.getEntry(e2), tree.getLastAdded());
         assertNotNull(tree.getRoot());
 
         String e3 = tree.addEntry(ENTRY_3);
         assertNotNull(e3);
         assertTrue(tree.verify(e3, ENTRY_3));
         assertTrue(tree.verify());
-        assertEquals(tree.getEntry(e3), tree.getLastAdded());
         assertNotNull(tree.getRoot());
 
         String e4 = tree.addEntry(ENTRY_4);
@@ -90,7 +73,6 @@ public class MerkleTreeTest {
         }
 
         assertTrue(tree.verify());
-        assertEquals(tree.getEntry(e4), tree.getLastAdded());
         assertNotNull(tree.getRoot());
     }
 
@@ -134,40 +116,5 @@ public class MerkleTreeTest {
         for (String key : m.keySet()) {
             assertTrue(tree.verify(key, m.get(key)));
         }
-    }
-
-    @Test
-    public void testImport() throws IOException {
-
-        try {
-            MerkleTree mt = merkleUtil.load(getContents("valid.json"));
-            assertNotNull(mt.getRoot());
-            assertTrue(mt.verify());
-        } catch (MerkleException e) {
-            fail("should not have thrown an exception.");
-        }
-
-        try {
-            MerkleTree mt2 = merkleUtil.load(getContents("invalidLeaf.json"));
-            assertNotNull(mt2.getRoot());
-            assertFalse(mt2.verify());
-            fail("should have thrown an exception.");
-        } catch (MerkleException e) {
-            //wrong
-        }
-
-        try {
-            MerkleTree mt3 = merkleUtil.load(getContents("invalidNode.json"));
-            assertNotNull(mt3.getRoot());
-            assertFalse(mt3.verify());
-            fail("should have thrown an exception.");
-        } catch (MerkleException e) {
-            //wrong
-        }
-    }
-
-    private String getContents(String fileName) throws IOException {
-        URI u = new ClassPathResource(fileName).getURI();
-        return new String(Files.readAllBytes(Paths.get(u)));
     }
 }

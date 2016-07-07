@@ -42,7 +42,7 @@ public class MerkleUtil {
             throw new MerkleException(e);
         }
 
-        mt.setRoot(n);
+        mt.setRoot((Node) n);
         return mt;
     }
 
@@ -81,7 +81,7 @@ public class MerkleUtil {
         }
     }
 
-    public void verify(Node n) throws MerkleException {
+    void verify(Node n) throws MerkleException {
         if (n.getLeft() == null && n.getRight() == null && n.getHash() == null) {
             return;
         }
@@ -99,7 +99,11 @@ public class MerkleUtil {
         }
     }
 
-    public String concatHash(Node node) {
+    String concatHash(Node node) {
         return hasher.hashAndEncode(node.getLeft().getHash() + node.getRight().getHash());
+    }
+
+    char[] calcPath(int size) {
+        return Integer.toBinaryString(size).toCharArray();
     }
 }

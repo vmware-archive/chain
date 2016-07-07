@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import demo.Hasher;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 @JsonPropertyOrder({"size", "levels", "lastAdded", "root"})
@@ -14,24 +14,17 @@ public class MerkleTree {
 
     private MerkleUtil merkleUtil = new MerkleUtil();
 
-    private final Map<String, Leaf> leaves = new LinkedHashMap<>();
+    private final Map<String, Leaf> leaves = new HashMap<>();
 
-    private Child root;
+    private Node root = new Node();
 
     public void clear() {
         getLeaves().clear();
-        setRoot(null);
+        setRoot(new Node());
     }
 
     private Map<String, Leaf> getLeaves() {
         return leaves;
-    }
-
-    Leaf getLastAdded() {
-        if (getLeaves().size() < 1) {
-            return null;
-        }
-        return (Leaf) getLeaves().values().toArray()[getLeaves().size() - 1];
     }
 
     public Leaf getEntry(String key) {
@@ -52,23 +45,68 @@ public class MerkleTree {
     }
 
     private void addLeaf(Leaf l) throws MerkleException {
-        //no root?
-        if (getRoot() == null) {
-            setRoot(l);
-        } else if (treeIsFull()) {
-            //we need a new root
-            addNewLevel().addChild(l);
-        } else {
+        char[] path = merkleUtil.calcPath(size());
+        buildPath(path);
+        addLeaf(path, l);
+    }
 
-            //get an open slot to put this into
-            Node parent = findNextParent();
+    private void addLeaf(char[] path, Leaf l) {
+        Node parent = getRoot();
 
-            //add the new node to the tree
-            parent.addChild(l);
+        if (size() > 0) {
+            for (char c : path) {
+                if (c == '0') {
+                    parent = (Node) parent.getLeft();
+                }
+                if (c == '1') {
+                    parent = (Node) parent.getRight();
+                }
+            }
+        }
+        parent.setLeft(l);
+        l.setParent(parent);
+        registerLeaf(l);
+    }
+
+    private void buildPath(char[] path) throws MerkleException {
+        //special case: no entries yet, the root  will be the parent
+        if (size() < 1) {
+            return;
         }
 
-        //add the leaf to the leaves collection
-        registerLeaf(l);
+        //if tree is full we need a new root to start from
+        if (treeIsFull()) {
+            createNewRoot();
+        }
+
+        Node parent = getRoot();
+        //start at root and build out the branch as needed
+        for (char c : path) {
+            if (c == '0') {
+                if (parent.getLeft() == null) {
+                    Node left = new Node();
+                    parent.setLeft(left);
+                    left.setParent(parent);
+                }
+                parent = (Node) parent.getLeft();
+            }
+
+            if (c == '1') {
+                if (parent.getRight() == null) {
+                    Node right = new Node();
+                    parent.setRight(right);
+                    right.setParent(parent);
+                }
+                parent = (Node) parent.getRight();
+            }
+        }
+    }
+
+    private void createNewRoot() {
+        Node n = new Node();
+        n.setLeft(getRoot());
+        getRoot().setParent(n);
+        setRoot(n);
     }
 
     void registerLeaf(Leaf l) {
@@ -87,59 +125,6 @@ public class MerkleTree {
     @JsonProperty
     private int size() {
         return getLeaves().size();
-    }
-
-    private Node addNewLevel() throws MerkleException {
-        Node node = new Node();
-
-        //create a new node branch n levels deep
-        Node newRoot = createBranch(node, levels());
-
-        //swap the new root's left to its right
-        newRoot.setRight(newRoot.getLeft());
-
-        //put the old root in the left of the newRoot
-        newRoot.setLeft(getRoot());
-        getRoot().setParent(newRoot);
-        setRoot(newRoot);
-
-        return node;
-    }
-
-    private Node createBranch(Node n, int levels) throws MerkleException {
-        Node parent;
-        Node child = n;
-        for (int i = 0; i < levels; i++) {
-            parent = new Node();
-            parent.addChild(child);
-
-            child = parent;
-        }
-
-        return child;
-    }
-
-    private Node findNextParent() throws MerkleException {
-        Node n = getLastAdded().getParent();
-        int level = 0;
-        while (n.getRight() != null) {
-            n = n.getParent();
-            level++;
-            if (n.equals(getRoot())) {
-                throw new MerkleException("hit root, not supposed to happen!");
-            }
-        }
-
-        if (level == 0) {
-            return n;
-        }
-
-        Node bottom = new Node();
-        Node top = createBranch(bottom, level - 1);
-
-        n.addChild(top);
-
-        return bottom;
     }
 
     private void rehash(Leaf leaf) {
@@ -168,11 +153,11 @@ public class MerkleTree {
     }
 
     @JsonProperty
-    Child getRoot() {
+    Node getRoot() {
         return root;
     }
 
-    void setRoot(Child root) {
+    void setRoot(Node root) {
         this.root = root;
     }
 
