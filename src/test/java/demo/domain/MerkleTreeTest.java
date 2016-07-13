@@ -1,14 +1,21 @@
-package demo.merkle;
+package demo.domain;
 
 import demo.Application;
+import demo.MerkleException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
+import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
@@ -37,7 +44,7 @@ public class MerkleTreeTest {
 
         String e1 = tree.addEntry(ENTRY_1);
         assertNotNull(e1);
-        assertNotNull(tree.getEntry(e1));
+        assertNotNull(tree.get(e1));
         assertTrue(tree.verify(e1, ENTRY_1));
 
         try {
@@ -116,5 +123,48 @@ public class MerkleTreeTest {
         for (String key : m.keySet()) {
             assertTrue(tree.verify(key, m.get(key)));
         }
+    }
+
+    @Test
+    public void testCalcPath() {
+        char[] c1 = tree.calcPath(9);
+        assertNotNull(c1);
+    }
+
+    @Test
+    public void testImport() throws IOException {
+        try {
+            tree.clear();
+            tree.load(getContents("valid.json"));
+            assertNotNull(tree.getRoot());
+            assertTrue(tree.verify());
+        } catch (MerkleException e) {
+            fail("should not have thrown an exception.");
+        }
+
+        try {
+            tree.clear();
+            tree.load(getContents("invalidLeaf.json"));
+            assertNotNull(tree.getRoot());
+            assertFalse(tree.verify());
+            fail("should have thrown an exception.");
+        } catch (MerkleException e) {
+            //wrong
+        }
+
+        try {
+            tree.clear();
+            tree.load(getContents("invalidNode.json"));
+            assertNotNull(tree.getRoot());
+            assertFalse(tree.verify());
+            fail("should have thrown an exception.");
+        } catch (MerkleException e) {
+            //wrong
+        }
+    }
+
+    private String getContents(String fileName) throws IOException {
+        URI u = new ClassPathResource(fileName).getURI();
+        return new String(Files.readAllBytes(Paths.get(u)));
     }
 }

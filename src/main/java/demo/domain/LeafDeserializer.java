@@ -1,4 +1,4 @@
-package demo.merkle;
+package demo.domain;
 
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -24,11 +24,8 @@ class LeafDeserializer extends JsonDeserializer<Leaf> {
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         ObjectNode root = mapper.readTree(jp);
 
-        Leaf l = new Leaf();
-        l.setHash(root.get("hash").asText());
-        l.setKey(root.get("key").asText());
-
-        tree.registerLeaf(l);
+        Leaf l = new Leaf(root.get("key").asText(), root.get("hash").asText());
+        tree.put(l);
 
         return l;
     }

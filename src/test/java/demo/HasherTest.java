@@ -13,18 +13,16 @@ import static org.junit.Assert.assertNotNull;
 @SpringApplicationConfiguration(classes = Application.class)
 public class HasherTest {
 
-    private final Hasher hasher = new Hasher();
-
     @Test
     public void testHash() {
-        String hash = hasher.hashAndEncode(null);
+        String hash = Hasher.hashAndEncode(null);
         assertNull(hash);
 
-        hash = hasher.hashAndEncode("");
+        hash = Hasher.hashAndEncode("");
         assertNotNull(hash);
         assertEquals("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=", hash);
 
-        hash = hasher.hashAndEncode("This is a test.");
+        hash = Hasher.hashAndEncode("This is a test.");
         assertNotNull(hash);
         assertEquals("qKL26+KGaXxSfrNaWLVTlTLps647ZNTrCkb7ZXtBViw=", hash);
     }

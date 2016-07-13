@@ -1,20 +1,31 @@
-package demo.merkle;
+package demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import demo.Hasher;
+import demo.MerkleException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class Node extends Child {
+public class Node extends Child {
 
     private Child left;
 
     private Child right;
 
-    void setLeft(Child left) {
+    Node() {
+        super();
+    }
+
+    Node(String hash) {
+        this();
+        setHash(hash);
+    }
+
+    private void setLeft(Child left) {
         this.left = left;
     }
 
-    void setRight(Child right) {
+    private void setRight(Child right) {
         this.right = right;
     }
 
@@ -62,13 +73,45 @@ class Node extends Child {
 
     public String toString() {
         String s = "Node:hash=" + getHash();
-        if(getLeft() != null) {
+        if (getLeft() != null) {
             s += ",left=" + getLeft().getHash();
         }
 
-        if(getRight() != null) {
+        if (getRight() != null) {
             s += ",right=" + getRight().getHash();
         }
         return s;
+    }
+
+    void rehash() {
+        //if node has no sibling, just inherit child hash
+        if (getRight() == null) {
+            setHash(getLeft().getHash());
+        } else {
+            //set hash to the hash of the concatenated child hashes
+            setHash(concatHash());
+        }
+    }
+
+    private String concatHash() {
+        return Hasher.hashAndEncode(getLeft().getHash() + getRight().getHash());
+    }
+
+    public void verify() throws MerkleException {
+        if (getLeft() == null && getRight() == null && getHash() == null) {
+            return;
+        }
+
+        if (getRight() == null) {
+            if (!getLeft().getHash().equals(getHash())) {
+                throw new MerkleException("child hash inheritance verification failed: " + this);
+            } else {
+                return;
+            }
+        }
+
+        if (!concatHash().equals(getHash())) {
+            throw new MerkleException("hash concatenation failed: " + this);
+        }
     }
 }

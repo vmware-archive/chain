@@ -1,19 +1,16 @@
-package demo.merkle;
+package demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import demo.Hasher;
+import demo.MerkleException;
 
 public class Leaf extends Child {
 
     private String key;
 
     Leaf(String key, String hash) {
-        this();
         setKey(key);
         setHash(hash);
-    }
-
-    Leaf() {
-        super();
     }
 
     @JsonProperty
@@ -46,5 +43,15 @@ public class Leaf extends Child {
 
     public String toString() {
         return "Leaf:key=" + getKey() + ",hash=" + getHash();
+    }
+
+    public void verify(String entry) throws MerkleException {
+        if (getHash() == null || entry == null) {
+            throw new MerkleException("unable to verify: null entry or hash encountered.");
+        }
+
+        if (!getHash().equals(Hasher.hashAndEncode(entry))) {
+            throw new MerkleException("hash mismatch for entry: " + entry);
+        }
     }
 }

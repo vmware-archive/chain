@@ -1,4 +1,4 @@
-package demo.merkle;
+package demo.domain;
 
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -10,12 +10,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 
 class ChildDeserializer extends JsonDeserializer<Child> {
-
-    private MerkleTree tree;
-
-    ChildDeserializer(MerkleTree mt) {
-        this.tree = mt;
-    }
 
     @Override
     public Child deserialize(JsonParser jp, DeserializationContext ctxt) throws

@@ -1,12 +1,12 @@
-package demo.merkle;
+package demo;
 
 public class MerkleException extends Exception {
 
-    MerkleException(String message) {
+    public MerkleException(String message) {
         super(message);
     }
 
-    MerkleException(Throwable t) {
+    public MerkleException(Throwable t) {
         super(t);
     }
 }

@@ -8,8 +8,6 @@ import java.util.Map;
 @Service
 class MapA {
 
-    private final Hasher hasher = new Hasher();
-
     private final Map<String, String> map = new HashMap<>();
 
 
@@ -18,7 +16,7 @@ class MapA {
             return all();
         }
 
-        String key = hasher.hashAndEncode(entry);
+        String key = Hasher.hashAndEncode(entry);
         map.put(key, entry);
         return key;
     }

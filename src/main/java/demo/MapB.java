@@ -9,8 +9,6 @@ import java.util.UUID;
 @Service
 class MapB {
 
-    private final Hasher hasher = new Hasher();
-
     private final Map<String, String> map = new HashMap<>();
 
     Object addEntry(String entry) {
@@ -19,7 +17,7 @@ class MapB {
         }
 
         String key = UUID.randomUUID().toString();
-        String value = hasher.hashAndEncode(entry);
+        String value = Hasher.hashAndEncode(entry);
 
         map.put(key, value);
         return key;
@@ -34,6 +32,6 @@ class MapB {
     }
 
     boolean verify(String entry, String key) {
-        return map.containsKey(key) && map.get(key).equals(hasher.hashAndEncode(entry));
+        return map.containsKey(key) && map.get(key).equals(Hasher.hashAndEncode(entry));
     }
 }

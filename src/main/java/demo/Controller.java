@@ -1,9 +1,8 @@
 package demo;
 
-import demo.merkle.Leaf;
-import demo.merkle.MerkleException;
-import demo.merkle.MerkleTree;
-import demo.merkle.MerkleUtil;
+import demo.domain.Chain;
+import demo.domain.Leaf;
+import demo.domain.MerkleTree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +24,7 @@ public class Controller {
     private MerkleTree merkleTree;
 
     @Autowired
-    private MerkleUtil merkleUtil;
+    private Chain chain;
 
     @RequestMapping(value = "/mapA/add/{entry}")
     public Object addChainAEntry(@PathVariable String entry) {
@@ -74,7 +73,7 @@ public class Controller {
 
     @RequestMapping(value = "/merkleTree/find/{key}")
     public Leaf getMerkleEntry(@PathVariable String key) {
-        return merkleTree.getEntry(key);
+        return merkleTree.get(key);
     }
 
     @RequestMapping(value = "/merkleTree/verify")
@@ -97,12 +96,54 @@ public class Controller {
 
     @RequestMapping(value = "/merkleTree/load/{numberOfEntries}")
     public MerkleTree merkleLoad(@PathVariable String numberOfEntries) throws MerkleException {
-        merkleUtil.loadRandomEntries(numberOfEntries, merkleTree);
+        int i = 0;
+        try {
+            i = Integer.parseInt(numberOfEntries);
+        } catch (NumberFormatException e) {
+            throw new MerkleException(e);
+        }
+        merkleTree.loadRandomEntries(i);
         return merkleTree;
     }
 
     @RequestMapping(value = "/merkleTree/clear")
     public void merkleClear() {
         merkleTree.clear();
+    }
+
+    @RequestMapping(value = "/chain/addBlock")
+    public Chain addChainBlock() throws MerkleException {
+        chain.addBlock(merkleTree);
+        merkleTree.clear();
+        return chain;
+    }
+
+    @RequestMapping(value = "/chain/find/{key}")
+    public Leaf getChainEntry(@PathVariable String key) {
+        return chain.get(key);
+    }
+
+    @RequestMapping(value = "/chain/verify")
+    public boolean verifyChain(@RequestParam(value = "key", required = false) String key, @RequestParam(value = "entry", required = false) String entry) throws MerkleException {
+        if (key == null && entry == null) {
+            return chain.verify();
+        }
+
+        if (key == null || entry == null) {
+            return false;
+        }
+
+        return chain.verify(key, entry);
+    }
+
+    @RequestMapping(value = "/chain")
+    public Chain chain() {
+        return chain;
+    }
+
+
+    @RequestMapping(value = "/chain/clear")
+    public void chainClear() {
+        chain.clear();
     }
 }
