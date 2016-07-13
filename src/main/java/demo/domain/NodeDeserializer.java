@@ -10,7 +10,7 @@ import demo.MerkleException;
 
 import java.io.IOException;
 
-class NodeDeserializer extends JsonDeserializer<Node> {
+public class NodeDeserializer extends JsonDeserializer<Node> {
 
     @Override
     public Node deserialize(JsonParser jp, DeserializationContext ctxt) throws

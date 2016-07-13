@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
@@ -134,29 +133,26 @@ public class MerkleTreeTest {
     @Test
     public void testImport() throws IOException {
         try {
-            tree.clear();
-            tree.load(getContents("valid.json"));
-            assertNotNull(tree.getRoot());
-            assertTrue(tree.verify());
+            Chainable c = MerkleTree.load(getContents("valid.json"));
+            assertNotNull(c.getHash());
+            assertTrue(c.verify());
         } catch (MerkleException e) {
             fail("should not have thrown an exception.");
         }
 
         try {
-            tree.clear();
-            tree.load(getContents("invalidLeaf.json"));
-            assertNotNull(tree.getRoot());
-            assertFalse(tree.verify());
+            Chainable c = MerkleTree.load(getContents("invalidLeaf.json"));
+            assertNotNull(c.getHash());
+            c.verify();
             fail("should have thrown an exception.");
         } catch (MerkleException e) {
             //wrong
         }
 
         try {
-            tree.clear();
-            tree.load(getContents("invalidNode.json"));
-            assertNotNull(tree.getRoot());
-            assertFalse(tree.verify());
+            Chainable c = MerkleTree.load(getContents("invalidNode.json"));
+            assertNotNull(c.getHash());
+            c.verify();
             fail("should have thrown an exception.");
         } catch (MerkleException e) {
             //wrong

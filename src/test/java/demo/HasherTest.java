@@ -20,10 +20,10 @@ public class HasherTest {
 
         hash = Hasher.hashAndEncode("");
         assertNotNull(hash);
-        assertEquals("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=", hash);
+        assertEquals("47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU", hash);
 
         hash = Hasher.hashAndEncode("This is a test.");
         assertNotNull(hash);
-        assertEquals("qKL26+KGaXxSfrNaWLVTlTLps647ZNTrCkb7ZXtBViw=", hash);
+        assertEquals("qKL26-KGaXxSfrNaWLVTlTLps647ZNTrCkb7ZXtBViw", hash);
     }
 }

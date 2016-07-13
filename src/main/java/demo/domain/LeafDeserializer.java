@@ -8,14 +8,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-class LeafDeserializer extends JsonDeserializer<Leaf> {
+public class LeafDeserializer extends JsonDeserializer<Leaf> {
 
-    private MerkleTree tree;
-
-    LeafDeserializer(MerkleTree mt) {
-        this.tree = mt;
-    }
+    public Map<String, Leaf> leaves = new HashMap();
 
     @Override
     public Leaf deserialize(JsonParser jp, DeserializationContext ctxt) throws
@@ -25,7 +25,7 @@ class LeafDeserializer extends JsonDeserializer<Leaf> {
         ObjectNode root = mapper.readTree(jp);
 
         Leaf l = new Leaf(root.get("key").asText(), root.get("hash").asText());
-        tree.put(l);
+        leaves.put(l.getKey(), l);
 
         return l;
     }

@@ -9,8 +9,13 @@ public class Leaf extends Child {
     private String key;
 
     Leaf(String key, String hash) {
+        this();
         setKey(key);
         setHash(hash);
+    }
+
+    Leaf() {
+        super();
     }
 
     @JsonProperty

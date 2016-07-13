@@ -2,7 +2,7 @@ package demo.domain;
 
 import demo.MerkleException;
 
-interface Chainable {
+public interface Chainable {
 
     boolean verify() throws MerkleException;
 
@@ -11,4 +11,8 @@ interface Chainable {
     void clear();
 
     int size();
+
+    Leaf get(String key);
+
+    String getHash();
 }

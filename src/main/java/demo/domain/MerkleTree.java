@@ -2,16 +2,8 @@ package demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import demo.Hasher;
 import demo.MerkleException;
-
-import java.io.IOException;
 
 @JsonPropertyOrder({"size", "levels", "root"})
 public class MerkleTree extends ChainableBase {
@@ -124,33 +116,5 @@ public class MerkleTree extends ChainableBase {
 
     char[] calcPath(int size) {
         return Integer.toBinaryString(size).toCharArray();
-    }
-
-    void load(String json) throws MerkleException {
-        clear();
-        Child n;
-
-        try {
-            SimpleModule module = new SimpleModule();
-            module.addDeserializer(Leaf.class, new LeafDeserializer(this));
-            module.addDeserializer(Node.class, new NodeDeserializer());
-            module.addDeserializer(Child.class, new ChildDeserializer());
-
-            JsonFactory jsonFactory = new JsonFactory();
-            JsonParser jp = jsonFactory.createParser(json);
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(module);
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            jp.setCodec(mapper);
-            TreeNode jsonNode = jp.readValueAsTree().get("root");
-
-            String s = jsonNode.toString();
-
-            n = mapper.readValue(s, Child.class);
-        } catch (IOException e) {
-            throw new MerkleException(e);
-        }
-
-        setRoot((Node) n);
     }
 }
