@@ -18,7 +18,7 @@ Simple map of entries and hashes. Not very useful...
 * see the contents of the map: [http://chain.cfapps.io/mapA]
 
 ## MapB
-Same as above, except instead of caching values and hashes, it returns a key to the user for future. Better than MapA because it does not store entries (more secure, less space needed) but still not that useful (can be tampered with).
+Same as above, except instead of caching values and hashes, it returns a key for future use. Better than MapA because it does not store entries (more secure, less space needed) but still not that useful (can be tampered with).
 
 * add an entry: [http://chain.cfapps.io/mapB/add/anEntry] returns the key for the added entry
 * find an entry: [http://chain.cfapps.io/mapB/find/aKey] returns the hash for the given key
@@ -26,7 +26,7 @@ Same as above, except instead of caching values and hashes, it returns a key to 
 * see the contents of the map: [http://chain.cfapps.io/mapB]
 
 ## MerkleTree
-Data structure used to store hashes in a efficient, tamper-proof manner. For more information about merkle trees, see here: [https://en.wikipedia.org/wiki/Merkle_tree]. This tree is implemented as a "perfect binary tree" where leaves are all at the same level. This lets us use some interesting mathematical properties to manage the tree.
+Data structure used to store hashes in a efficient, tamper-proof manner. For more information about merkle trees, see [https://en.wikipedia.org/wiki/Merkle_tree]. This tree is implemented as a "perfect binary tree" where leaves are all at the same level. This lets us use some interesting mathematical properties to manage the tree.
 
 * add an entry: [http://chain.cfapps.io/merkleTree/add/anEntry] returns the key for the added entry
 * find an entry: [http://chain.cfapps.io/merkleTree/find/aKey] returns the leaf entry from the merkle tree for the given key
