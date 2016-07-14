@@ -22,7 +22,7 @@ Same as above, except instead of caching values and hashes, it returns a key to 
 
 * add an entry: [http://chain.cfapps.io/mapB/add/anEntry] returns the key for the added entry
 * find an entry: [http://chain.cfapps.io/mapB/find/aKey] returns the hash for the given key
-* verify an entry: [http://chain.cfapps.io/mapB/verify?entry=anNntry&hash=aHash] returns true or false
+* verify an entry: [http://chain.cfapps.io/mapB/verify?entry=anEntry&key=aKey] returns true or false
 * see the contents of the map: [http://chain.cfapps.io/mapB]
 
 ## MerkleTree
