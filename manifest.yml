@@ -1,0 +1,7 @@
+---
+applications:
+- name: chain
+  buildpack: java_buildpack
+  memory: 512M
+  instances: 1
+  path: target/chain-1.0.jar

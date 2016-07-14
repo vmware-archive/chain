@@ -1,5 +1,4 @@
-package demo.domain;
-
+package io.pivotal.cf.chain.domain;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -9,7 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 
-public class ChildDeserializer extends JsonDeserializer<Child> {
+class ChildTranslator extends JsonDeserializer<Child> {
 
     @Override
     public Child deserialize(JsonParser jp, DeserializationContext ctxt) throws

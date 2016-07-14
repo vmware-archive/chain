@@ -1,4 +1,4 @@
-package demo;
+package io.pivotal.cf.chain;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.binary.Base64;

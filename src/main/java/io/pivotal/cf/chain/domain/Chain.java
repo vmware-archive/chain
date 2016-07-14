@@ -1,10 +1,10 @@
-package demo.domain;
+package io.pivotal.cf.chain.domain;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import demo.MerkleException;
+import io.pivotal.cf.chain.MerkleException;
 
-@JsonPropertyOrder({"size", "root"})
-public class Chain extends ChainableBase {
+@JsonPropertyOrder({"hash", "size", "root"})
+public class Chain extends AbstractChain {
 
     public void addBlock(MerkleTree tree) throws MerkleException {
         if (size() == 0) {

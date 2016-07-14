@@ -1,6 +1,6 @@
-package demo.domain;
+package io.pivotal.cf.chain.domain;
 
-import demo.MerkleException;
+import io.pivotal.cf.chain.MerkleException;
 
 public interface Chainable {
 

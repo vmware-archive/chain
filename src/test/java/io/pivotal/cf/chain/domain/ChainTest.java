@@ -1,7 +1,7 @@
-package demo.domain;
+package io.pivotal.cf.chain.domain;
 
-import demo.Application;
-import demo.MerkleException;
+import io.pivotal.cf.chain.Application;
+import io.pivotal.cf.chain.MerkleException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

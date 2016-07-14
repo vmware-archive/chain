@@ -1,4 +1,4 @@
-package demo.domain;
+package io.pivotal.cf.chain.domain;
 
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -6,11 +6,11 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import demo.MerkleException;
+import io.pivotal.cf.chain.MerkleException;
 
 import java.io.IOException;
 
-public class NodeDeserializer extends JsonDeserializer<Node> {
+class NodeTranslator extends JsonDeserializer<Node> {
 
     @Override
     public Node deserialize(JsonParser jp, DeserializationContext ctxt) throws

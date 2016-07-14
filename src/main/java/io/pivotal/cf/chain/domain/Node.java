@@ -1,9 +1,9 @@
-package demo.domain;
+package io.pivotal.cf.chain.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import demo.Hasher;
-import demo.MerkleException;
+import io.pivotal.cf.chain.Hasher;
+import io.pivotal.cf.chain.MerkleException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Node extends Child {

@@ -1,9 +1,9 @@
-package demo;
+package io.pivotal.cf.chain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import demo.domain.Chainable;
-import demo.domain.ChainableBase;
-import demo.domain.Leaf;
+import io.pivotal.cf.chain.domain.AbstractChain;
+import io.pivotal.cf.chain.domain.Chainable;
+import io.pivotal.cf.chain.domain.Leaf;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -155,7 +155,7 @@ public class ControllerTest {
         String s = result7.getResponse().getContentAsString();
         assertNotNull(s);
 
-        Chainable c = ChainableBase.load(s);
+        Chainable c = AbstractChain.load(s);
         assertNotNull(c);
         assertEquals(FOO_HASH, c.get(content).getHash());
         assertTrue(c.size() == 1);
@@ -166,7 +166,7 @@ public class ControllerTest {
                 .andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         s = result8.getResponse().getContentAsString();
-        c = ChainableBase.load(s);
+        c = AbstractChain.load(s);
         assertNotNull(c);
         assertEquals(5, c.size());
         assertTrue(c.verify());
@@ -221,7 +221,7 @@ public class ControllerTest {
         String s = result7.getResponse().getContentAsString();
         assertNotNull(s);
 
-        Chainable c = ChainableBase.load(s);
+        Chainable c = AbstractChain.load(s);
         assertNotNull(c);
         assertEquals(6, c.size());
         assertTrue(c.verify());

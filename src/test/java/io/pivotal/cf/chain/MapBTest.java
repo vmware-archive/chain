@@ -1,4 +1,4 @@
-package demo;
+package io.pivotal.cf.chain;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,34 +13,28 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-public class MapATest {
+public class MapBTest {
 
     private static final String ENTRY_1 = "test 1";
     private static final String ENTRY_2 = "test 2";
-
     private static final String HASH_1 = "9nITsSKl1ELSuTvajMRcVkpw7F0qTg6Vu1hc8ZmGnJg";
     private static final String HASH_2 = "3sLkvEmSMUqcmlG72FnhsIG3QXiBjFPBnRjW92H12AQ";
 
     @Autowired
-    private MapA mapA;
+    private MapB mapB;
 
     @Test
-    public void testMapA() {
+    public void testMapB() {
+        String key1 = mapB.put(ENTRY_1);
+        assertNotNull(key1);
+        assertTrue(mapB.verify(ENTRY_1, key1));
+        assertFalse(mapB.verify("foo", key1));
+        assertEquals(HASH_1, mapB.get(key1));
 
-        Object hash1 = mapA.put(ENTRY_1);
-        assertNotNull(hash1);
-        assertEquals(HASH_1, hash1);
-        assertEquals(ENTRY_1, mapA.get(HASH_1));
-
-        Object hash2 = mapA.put("test 2");
-        assertNotNull(hash2);
-        assertEquals(HASH_2, hash2);
-        assertEquals(ENTRY_2, mapA.get(HASH_2));
-
-        assertTrue(mapA.verify(ENTRY_1, HASH_1));
-        assertTrue(mapA.verify(ENTRY_2, HASH_2));
-
-        assertFalse(mapA.verify("foo", HASH_1));
-        assertFalse(mapA.verify("foo", HASH_2));
+        String key2 = mapB.put(ENTRY_2);
+        assertNotNull(key2);
+        assertTrue(mapB.verify(ENTRY_2, key2));
+        assertFalse(mapB.verify("foo", key2));
+        assertEquals(HASH_2, mapB.get(key2));
     }
 }

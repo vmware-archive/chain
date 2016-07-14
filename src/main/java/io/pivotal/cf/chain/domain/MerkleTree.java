@@ -1,12 +1,12 @@
-package demo.domain;
+package io.pivotal.cf.chain.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import demo.Hasher;
-import demo.MerkleException;
+import io.pivotal.cf.chain.Hasher;
+import io.pivotal.cf.chain.MerkleException;
 
-@JsonPropertyOrder({"size", "levels", "root"})
-public class MerkleTree extends ChainableBase {
+@JsonPropertyOrder({"hash", "size", "levels", "root"})
+public class MerkleTree extends AbstractChain {
 
     public String addEntry(String entry) throws MerkleException {
         //create a leaf for the entry
@@ -45,7 +45,7 @@ public class MerkleTree extends ChainableBase {
         put(l);
     }
 
-    void put(Leaf l) {
+    private void put(Leaf l) {
         getLeaves().put(l.getKey(), l);
     }
 

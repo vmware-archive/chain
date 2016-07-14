@@ -1,4 +1,4 @@
-package demo.domain;
+package io.pivotal.cf.chain.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -7,15 +7,15 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import demo.MerkleException;
+import io.pivotal.cf.chain.MerkleException;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ChainableBase implements Chainable {
+public abstract class AbstractChain implements Chainable {
 
-    private final Map<String, Leaf> leaves = new HashMap();
+    private final Map<String, Leaf> leaves = new HashMap<>();
 
     private Node root = new Node();
 
@@ -109,10 +109,10 @@ public abstract class ChainableBase implements Chainable {
     public static Chainable load(String json) throws MerkleException {
         SimpleModule module = new SimpleModule();
 
-        LeafDeserializer ld = new LeafDeserializer();
+        LeafTranslator ld = new LeafTranslator();
         module.addDeserializer(Leaf.class, ld);
-        module.addDeserializer(Node.class, new NodeDeserializer());
-        module.addDeserializer(Child.class, new ChildDeserializer());
+        module.addDeserializer(Node.class, new NodeTranslator());
+        module.addDeserializer(Child.class, new ChildTranslator());
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(module);

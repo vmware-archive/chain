@@ -1,7 +1,7 @@
-package demo;
+package io.pivotal.cf.chain;
 
-import demo.domain.Chain;
-import demo.domain.MerkleTree;
+import io.pivotal.cf.chain.domain.Chain;
+import io.pivotal.cf.chain.domain.MerkleTree;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

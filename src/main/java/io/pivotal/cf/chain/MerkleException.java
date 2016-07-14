@@ -1,4 +1,4 @@
-package demo;
+package io.pivotal.cf.chain;
 
 public class MerkleException extends Exception {
 

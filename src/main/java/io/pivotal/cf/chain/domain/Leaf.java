@@ -1,8 +1,8 @@
-package demo.domain;
+package io.pivotal.cf.chain.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import demo.Hasher;
-import demo.MerkleException;
+import io.pivotal.cf.chain.Hasher;
+import io.pivotal.cf.chain.MerkleException;
 
 public class Leaf extends Child {
 

@@ -1,4 +1,4 @@
-package demo;
+package io.pivotal.cf.chain;
 
 import org.springframework.stereotype.Service;
 

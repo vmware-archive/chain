@@ -1,9 +1,9 @@
-package demo.domain;
+package io.pivotal.cf.chain.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public abstract class Child {
+abstract class Child {
 
     private Node parent;
     private String hash;
