@@ -91,7 +91,7 @@ public class ControllerTest {
         assertNotNull(content2);
         assertEquals(FOO_HASH, content2);
 
-        MvcResult result3 = mockMvc.perform(get("/mapB/verify?entry=foo&hash=" + content))
+        MvcResult result3 = mockMvc.perform(get("/mapB/verify?entry=foo&key=" + content))
                 .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         Boolean b = (Boolean) toObject(result3.getResponse().getContentAsString(), Boolean.class);

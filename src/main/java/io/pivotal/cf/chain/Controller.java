@@ -45,7 +45,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/mapA/verify")
-    public ResponseEntity<Boolean> verifyChainA(@RequestParam(value = "entry") String entry, @RequestParam(value = "hash") String hash) {
+    public ResponseEntity<Boolean> verifyChainAEntry(@RequestParam(value = "entry") String entry, @RequestParam(value = "hash") String hash) {
         return new ResponseEntity<>(mapA.verify(entry, hash), httpHeaders(), HttpStatus.OK);
     }
 
@@ -65,8 +65,8 @@ public class Controller {
     }
 
     @RequestMapping(value = "/mapB/verify")
-    public ResponseEntity<Boolean> verifyChainB(@RequestParam(value = "entry") String entry, @RequestParam(value = "hash") String hash) {
-        return new ResponseEntity<>(mapB.verify(entry, hash), httpHeaders(), HttpStatus.OK);
+    public ResponseEntity<Boolean> verifyChainB(@RequestParam(value = "entry") String entry, @RequestParam(value = "key") String key) {
+        return new ResponseEntity<>(mapB.verify(entry, key), httpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/mapB")
