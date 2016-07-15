@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.pivotal.cf.chain.domain.AbstractChain;
 import io.pivotal.cf.chain.domain.Chainable;
 import io.pivotal.cf.chain.domain.Leaf;
+import io.pivotal.cf.chain.domain.VerificationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import java.io.IOException;
 
 import static junit.framework.TestCase.*;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -159,8 +161,18 @@ public class ControllerTest {
         assertNotNull(c);
         assertEquals(FOO_HASH, c.get(content).getHash());
         assertTrue(c.size() == 1);
-        assertTrue(c.verify());
-        assertTrue(c.verify(content, "foo"));
+
+        try {
+            c.verify();
+        } catch (VerificationException e) {
+            fail("should not have thrown an exception.");
+        }
+
+        try {
+            c.verify(content, "foo");
+        } catch (VerificationException e) {
+            fail("should not have thrown an exception.");
+        }
 
         MvcResult result8 = mockMvc.perform(get("/merkleTree/load/4"))
                 .andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
@@ -169,7 +181,12 @@ public class ControllerTest {
         c = AbstractChain.load(s);
         assertNotNull(c);
         assertEquals(5, c.size());
-        assertTrue(c.verify());
+
+        try {
+            c.verify();
+        } catch (VerificationException e) {
+            fail("should not have thrown an exception.");
+        }
 
         MvcResult result9 = mockMvc.perform(get("/merkleTree/clear"))
                 .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
@@ -224,10 +241,20 @@ public class ControllerTest {
         Chainable c = AbstractChain.load(s);
         assertNotNull(c);
         assertEquals(6, c.size());
-        assertTrue(c.verify());
+
+        try {
+            c.verify();
+        } catch (VerificationException e) {
+            fail("should not have thrown an exception.");
+        }
 
         assertEquals(FOO_HASH, c.get(key).getHash());
-        assertTrue(c.verify(key, "foo"));
+
+        try {
+            c.verify(key, "foo");
+        } catch (VerificationException e) {
+            fail("should not have thrown an exception.");
+        }
 
         MvcResult result9 = mockMvc.perform(get("/chain/clear"))
                 .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();

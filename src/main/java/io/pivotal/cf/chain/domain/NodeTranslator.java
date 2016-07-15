@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.pivotal.cf.chain.MerkleException;
 
 import java.io.IOException;
 
@@ -22,20 +21,12 @@ class NodeTranslator extends JsonDeserializer<Node> {
         Node n = new Node(root.get("hash").asText());
         if (root.get("left") != null) {
             Child left = mapper.treeToValue(root.get("left"), Child.class);
-            try {
-                n.addChild(left);
-            } catch (MerkleException e) {
-                throw new IOException(e);
-            }
+            n.addChild(left);
         }
 
         if (root.get("right") != null) {
             Child right = mapper.treeToValue(root.get("right"), Child.class);
-            try {
-                n.addChild(right);
-            } catch (MerkleException e) {
-                throw new IOException(e);
-            }
+            n.addChild(right);
         }
 
         return n;

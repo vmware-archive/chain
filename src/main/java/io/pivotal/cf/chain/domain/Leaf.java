@@ -2,7 +2,7 @@ package io.pivotal.cf.chain.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.pivotal.cf.chain.Hasher;
-import io.pivotal.cf.chain.MerkleException;
+import org.springframework.http.HttpStatus;
 
 public class Leaf extends Child {
 
@@ -50,13 +50,13 @@ public class Leaf extends Child {
         return "Leaf:key=" + getKey() + ",hash=" + getHash();
     }
 
-    public void verify(String entry) throws MerkleException {
+    public void verify(String entry) throws VerificationException {
         if (getHash() == null || entry == null) {
-            throw new MerkleException("unable to verify: null entry or hash encountered.");
+            throw new VerificationException("unable to verify: null entry or hash encountered", this, HttpStatus.BAD_REQUEST);
         }
 
         if (!getHash().equals(Hasher.hashAndEncode(entry))) {
-            throw new MerkleException("hash mismatch for entry: " + entry);
+            throw new VerificationException("hash mismatch for entry: " + entry, this, HttpStatus.CONFLICT);
         }
     }
 }

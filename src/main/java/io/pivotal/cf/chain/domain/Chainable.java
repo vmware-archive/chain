@@ -1,12 +1,10 @@
 package io.pivotal.cf.chain.domain;
 
-import io.pivotal.cf.chain.MerkleException;
-
 public interface Chainable {
 
-    boolean verify() throws MerkleException;
+    void verify() throws VerificationException;
 
-    boolean verify(String key, String entry) throws MerkleException;
+    void verify(String key, String entry) throws VerificationException;
 
     void clear();
 

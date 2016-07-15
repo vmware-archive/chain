@@ -3,7 +3,7 @@ package io.pivotal.cf.chain.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.pivotal.cf.chain.Hasher;
-import io.pivotal.cf.chain.MerkleException;
+import org.springframework.http.HttpStatus;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Node extends Child {
@@ -39,10 +39,7 @@ public class Node extends Child {
         return right;
     }
 
-    void addChild(Child child) throws MerkleException {
-        if (getLeft() != null && getRight() != null) {
-            throw new MerkleException("already full!");
-        }
+    void addChild(Child child) {
         if (getLeft() == null) {
             setLeft(child);
         } else {
@@ -97,21 +94,21 @@ public class Node extends Child {
         return Hasher.hashAndEncode(getLeft().getHash() + getRight().getHash());
     }
 
-    public void verify() throws MerkleException {
+    public void verify() throws VerificationException {
         if (getLeft() == null && getRight() == null && getHash() == null) {
             return;
         }
 
         if (getRight() == null) {
             if (!getLeft().getHash().equals(getHash())) {
-                throw new MerkleException("child hash inheritance verification failed: " + this);
+                throw new VerificationException("child hash inheritance verification failed.", this, HttpStatus.I_AM_A_TEAPOT);
             } else {
                 return;
             }
         }
 
         if (!concatHash().equals(getHash())) {
-            throw new MerkleException("hash concatenation failed: " + this);
+            throw new VerificationException("hash concatenation verification failed.", this, HttpStatus.I_AM_A_TEAPOT);
         }
     }
 }

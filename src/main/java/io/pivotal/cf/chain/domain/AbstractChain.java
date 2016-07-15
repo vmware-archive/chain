@@ -7,7 +7,7 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.pivotal.cf.chain.MerkleException;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public abstract class AbstractChain implements Chainable {
     }
 
     public String getHash() {
-        if(getRoot() == null) {
+        if (getRoot() == null) {
             return null;
         }
 
@@ -66,18 +66,17 @@ public abstract class AbstractChain implements Chainable {
     }
 
     //not exactly the most efficient way to do this.....
-    public boolean verify() throws MerkleException {
+    public void verify() throws VerificationException {
         if (size() <= 1) {
-            return true;
+            return;
         }
 
         for (Leaf l : leaves.values()) {
             verifyToRoot(l);
         }
-        return true;
     }
 
-    private void verifyToRoot(Leaf l) throws MerkleException {
+    private void verifyToRoot(Leaf l) throws VerificationException {
         Node parent = l.getParent();
         while (parent != null) {
             parent.verify();
@@ -86,27 +85,25 @@ public abstract class AbstractChain implements Chainable {
     }
 
     //validate this entry up through the root
-    public boolean verify(String key, String entry) throws MerkleException {
+    public void verify(String key, String entry) throws VerificationException {
         if (key == null || entry == null) {
-            throw new MerkleException("null key or entry not allowed.");
+            throw new VerificationException("null key or entry not allowed.", HttpStatus.BAD_REQUEST);
         }
 
         Leaf leaf = leaves.get(key);
         if (leaf == null) {
-            throw new MerkleException("no entry found for key: " + key);
+            throw new VerificationException("no entry found for key: " + key, HttpStatus.NOT_FOUND);
         }
 
         leaf.verify(entry);
         verifyToRoot(leaf);
-
-        return true;
     }
 
     public Leaf get(String key) {
         return leaves.get(key);
     }
 
-    public static Chainable load(String json) throws MerkleException {
+    public static Chainable load(String json) throws IOException {
         SimpleModule module = new SimpleModule();
 
         LeafTranslator ld = new LeafTranslator();
@@ -118,18 +115,14 @@ public abstract class AbstractChain implements Chainable {
         mapper.registerModule(module);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        MerkleTree mt = new MerkleTree();
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonParser jp = jsonFactory.createParser(json);
+        jp.setCodec(mapper);
+        TreeNode jsonNode = jp.readValueAsTree().get("root");
 
-        try {
-            JsonFactory jsonFactory = new JsonFactory();
-            JsonParser jp = jsonFactory.createParser(json);
-            jp.setCodec(mapper);
-            TreeNode jsonNode = jp.readValueAsTree().get("root");
-            mt.setRoot((Node) mapper.readValue(jsonNode.toString(), Child.class));
-            mt.getLeaves().putAll(ld.leaves);
-            return mt;
-        } catch (IOException e) {
-            throw new MerkleException(e);
-        }
+        MerkleTree mt = new MerkleTree();
+        mt.setRoot((Node) mapper.readValue(jsonNode.toString(), Child.class));
+        mt.getLeaves().putAll(ld.leaves);
+        return mt;
     }
 }

@@ -3,6 +3,7 @@ package io.pivotal.cf.chain;
 import io.pivotal.cf.chain.domain.Chain;
 import io.pivotal.cf.chain.domain.Leaf;
 import io.pivotal.cf.chain.domain.MerkleTree;
+import io.pivotal.cf.chain.domain.VerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -75,7 +76,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/add/{entry}")
-    public ResponseEntity<String> addMerkleEntry(@PathVariable String entry) throws MerkleException {
+    public ResponseEntity<String> addMerkleEntry(@PathVariable String entry) {
         return new ResponseEntity<>(merkleTree.addEntry(entry), httpHeaders(), HttpStatus.CREATED);
     }
 
@@ -85,16 +86,18 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/verify")
-    public ResponseEntity<Boolean> verifyMerkle(@RequestParam(value = "key", required = false) String key, @RequestParam(value = "entry", required = false) String entry) throws MerkleException {
+    public ResponseEntity<Boolean> verifyMerkle(@RequestParam(value = "key", required = false) String key, @RequestParam(value = "entry", required = false) String entry) throws VerificationException {
         if (key == null && entry == null) {
-            return new ResponseEntity<>(merkleTree.verify(), httpHeaders(), HttpStatus.OK);
+            merkleTree.verify();
+            return new ResponseEntity<>(Boolean.TRUE, httpHeaders(), HttpStatus.OK);
         }
 
         if (key == null || entry == null) {
             return new ResponseEntity<>(Boolean.FALSE, httpHeaders(), HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(merkleTree.verify(key, entry), httpHeaders(), HttpStatus.OK);
+        merkleTree.verify(key, entry);
+        return new ResponseEntity<>(Boolean.TRUE, httpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/merkleTree")
@@ -103,12 +106,12 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/load/{numberOfEntries}")
-    public ResponseEntity<MerkleTree> merkleLoad(@PathVariable String numberOfEntries) throws MerkleException {
+    public ResponseEntity<MerkleTree> merkleLoad(@PathVariable String numberOfEntries) {
         int i = 0;
         try {
             i = Integer.parseInt(numberOfEntries);
         } catch (NumberFormatException e) {
-            throw new MerkleException(e);
+            //ignore
         }
         merkleTree.loadRandomEntries(i);
         return new ResponseEntity<>(merkleTree, httpHeaders(), HttpStatus.CREATED);
@@ -121,7 +124,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/chain/addBlock")
-    public ResponseEntity<Chain> addChainBlock() throws MerkleException {
+    public ResponseEntity<Chain> addChainBlock() {
         chain.addBlock(merkleTree);
         merkleTree.clear();
         return new ResponseEntity<>(chain, httpHeaders(), HttpStatus.CREATED);
@@ -133,16 +136,18 @@ public class Controller {
     }
 
     @RequestMapping(value = "/chain/verify")
-    public ResponseEntity<Boolean> verifyChain(@RequestParam(value = "key", required = false) String key, @RequestParam(value = "entry", required = false) String entry) throws MerkleException {
+    public ResponseEntity<Boolean> verifyChain(@RequestParam(value = "key", required = false) String key, @RequestParam(value = "entry", required = false) String entry) throws VerificationException {
         if (key == null && entry == null) {
-            return new ResponseEntity<>(chain.verify(), httpHeaders(), HttpStatus.OK);
+            chain.verify();
+            return new ResponseEntity<>(Boolean.TRUE, httpHeaders(), HttpStatus.OK);
         }
 
         if (key == null || entry == null) {
             return new ResponseEntity<>(Boolean.FALSE, httpHeaders(), HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(chain.verify(key, entry), httpHeaders(), HttpStatus.OK);
+        chain.verify(key, entry);
+        return new ResponseEntity<>(Boolean.TRUE, httpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/chain")

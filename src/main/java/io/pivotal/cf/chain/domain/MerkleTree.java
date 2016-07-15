@@ -3,12 +3,11 @@ package io.pivotal.cf.chain.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.pivotal.cf.chain.Hasher;
-import io.pivotal.cf.chain.MerkleException;
 
 @JsonPropertyOrder({"hash", "size", "levels", "root"})
 public class MerkleTree extends AbstractChain {
 
-    public String addEntry(String entry) throws MerkleException {
+    public String addEntry(String entry) {
         //create a leaf for the entry
         Leaf leaf = new Leaf(Hasher.createId(), Hasher.hashAndEncode(entry));
 
@@ -21,13 +20,13 @@ public class MerkleTree extends AbstractChain {
         return leaf.getKey();
     }
 
-    private void addLeaf(Leaf l) throws MerkleException {
+    private void addLeaf(Leaf l) {
         char[] path = calcPath(size());
         buildPath(path);
         addLeaf(path, l);
     }
 
-    private void addLeaf(char[] path, Leaf l) throws MerkleException {
+    private void addLeaf(char[] path, Leaf l) {
         Node parent = getRoot();
 
         if (size() > 0) {
@@ -49,7 +48,7 @@ public class MerkleTree extends AbstractChain {
         getLeaves().put(l.getKey(), l);
     }
 
-    private void buildPath(char[] path) throws MerkleException {
+    private void buildPath(char[] path) {
         //special case: no entries yet, the root  will be the parent
         if (size() < 1) {
             return;
@@ -81,7 +80,7 @@ public class MerkleTree extends AbstractChain {
         }
     }
 
-    private void createNewRoot() throws MerkleException {
+    private void createNewRoot() {
         Node n = new Node();
         n.addChild(getRoot());
         setRoot(n);
@@ -91,7 +90,7 @@ public class MerkleTree extends AbstractChain {
         return isPowerOf2(size());
     }
 
-    public void loadRandomEntries(int numberOfEntries) throws MerkleException {
+    public void loadRandomEntries(int numberOfEntries) {
         for (int i = 0; i < numberOfEntries; i++) {
             addEntry(Hasher.createId());
         }
