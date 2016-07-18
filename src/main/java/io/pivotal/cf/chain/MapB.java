@@ -10,18 +10,18 @@ import java.util.UUID;
 class MapB extends HashMap<String, String> {
 
     @Autowired
-    Hasher hasher;
+    private Hasher hasher;
 
     String put(String entry) {
 
         String key = UUID.randomUUID().toString();
-        String value = hasher.hashAndEncode(entry);
+        String value = hasher.hash(entry);
 
         put(key, value);
         return key;
     }
 
     boolean verify(String entry, String key) {
-        return containsKey(key) && get(key).equals(hasher.hashAndEncode(entry));
+        return containsKey(key) && get(key).equals(hasher.hash(entry));
     }
 }

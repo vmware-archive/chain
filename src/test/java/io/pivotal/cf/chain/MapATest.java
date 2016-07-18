@@ -17,11 +17,11 @@ import static org.junit.Assert.assertNotNull;
 @WebAppConfiguration
 public class MapATest {
 
-    private static final String ENTRY_1 = "test 1";
-    private static final String ENTRY_2 = "test 2";
+    private static final String ENTRY_1 = "test one";
+    private static final String ENTRY_2 = "test two";
 
-    private static final String HASH_1 = "9nITsSKl1ELSuTvajMRcVkpw7F0qTg6Vu1hc8ZmGnJg";
-    private static final String HASH_2 = "3sLkvEmSMUqcmlG72FnhsIG3QXiBjFPBnRjW92H12AQ";
+    private static final String HASH_1 = "d8a8cc528ed16ade99b0c20e4d7b89ef4bfe7528a52bfdec857aaaafb53b07bb";
+    private static final String HASH_2 = "1fe58fbdb608735bfb96b974f71f8951a8986dc6593d3c95b2a59e068384b122";
 
     @Autowired
     private MapA mapA;
@@ -34,7 +34,7 @@ public class MapATest {
         assertEquals(HASH_1, hash1);
         assertEquals(ENTRY_1, mapA.get(HASH_1));
 
-        Object hash2 = mapA.put("test 2");
+        Object hash2 = mapA.put(ENTRY_2);
         assertNotNull(hash2);
         assertEquals(HASH_2, hash2);
         assertEquals(ENTRY_2, mapA.get(HASH_2));

@@ -17,10 +17,10 @@ import static org.junit.Assert.assertNotNull;
 @WebAppConfiguration
 public class MapBTest {
 
-    private static final String ENTRY_1 = "test 1";
-    private static final String ENTRY_2 = "test 2";
-    private static final String HASH_1 = "9nITsSKl1ELSuTvajMRcVkpw7F0qTg6Vu1hc8ZmGnJg";
-    private static final String HASH_2 = "3sLkvEmSMUqcmlG72FnhsIG3QXiBjFPBnRjW92H12AQ";
+    private static final String ENTRY_1 = "test a";
+    private static final String ENTRY_2 = "test b";
+    private static final String HASH_1 = "1136b2eb6a1a50fc4ce4463e726ee7a5b8cdf8fbaa969aa83a78dd2beaa275eb";
+    private static final String HASH_2 = "6346935ed39208ef8651fc772879acb7cd46382af5a968fdb0ad82759413f5fb";
 
     @Autowired
     private MapB mapB;

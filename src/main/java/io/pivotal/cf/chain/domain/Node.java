@@ -91,7 +91,7 @@ public class Node extends Child {
     }
 
     private String concatHash(Hasher hasher) {
-        return hasher.hashAndEncode(getLeft().getHash() + getRight().getHash());
+        return hasher.hash(getLeft().getHash() + getRight().getHash());
     }
 
     public void verify(Hasher hasher) throws VerificationException {

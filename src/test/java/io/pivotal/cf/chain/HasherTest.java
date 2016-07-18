@@ -1,7 +1,5 @@
-package io;
+package io.pivotal.cf.chain;
 
-import io.pivotal.cf.chain.Application;
-import io.pivotal.cf.chain.Hasher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +17,19 @@ import static org.junit.Assert.assertNotNull;
 public class HasherTest {
 
     @Autowired
-    Hasher hasher;
+    private Hasher hasher;
 
     @Test
     public void testHash() {
-        String hash = hasher.hashAndEncode(null);
+        String hash = hasher.hash(null);
         assertNull(hash);
 
-        hash = hasher.hashAndEncode("");
+        hash = hasher.hash("");
         assertNotNull(hash);
-        assertEquals("47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU", hash);
+        assertEquals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", hash);
 
-        hash = hasher.hashAndEncode("This is a test.");
+        hash = hasher.hash("This is a test.");
         assertNotNull(hash);
-        assertEquals("qKL26-KGaXxSfrNaWLVTlTLps647ZNTrCkb7ZXtBViw", hash);
+        assertEquals("a8a2f6ebe286697c527eb35a58b5539532e9b3ae3b64d4eb0a46fb657b41562c", hash);
     }
 }

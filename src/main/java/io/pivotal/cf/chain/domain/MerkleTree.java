@@ -13,7 +13,7 @@ public class MerkleTree extends AbstractChain {
 
     public String addEntry(String entry) {
         //create a leaf for the entry
-        Leaf leaf = new Leaf(getHasher().createId(), getHasher().hashAndEncode(entry));
+        Leaf leaf = new Leaf(getHasher().createId(), getHasher().hash(entry));
 
         //add the leaf to the tree
         addLeaf(leaf);

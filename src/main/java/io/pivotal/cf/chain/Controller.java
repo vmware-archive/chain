@@ -29,6 +29,9 @@ public class Controller {
     @Autowired
     private Chain chain;
 
+    @Autowired
+    Hasher hasher;
+
     private HttpHeaders httpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -160,5 +163,10 @@ public class Controller {
     public ResponseEntity chainClear() {
         chain.clear();
         return new ResponseEntity(httpHeaders(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/hasher/hash/{entry}")
+    public ResponseEntity<String> hasherHash(@PathVariable String entry) {
+        return new ResponseEntity<>(hasher.hash(entry), httpHeaders(), HttpStatus.OK);
     }
 }

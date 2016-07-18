@@ -55,7 +55,7 @@ public class Leaf extends Child {
             throw new VerificationException("unable to verify: null entry or hash encountered", this, HttpStatus.BAD_REQUEST);
         }
 
-        if (!getHash().equals(hasher.hashAndEncode(entry))) {
+        if (!getHash().equals(hasher.hash(entry))) {
             throw new VerificationException("hash mismatch for entry: " + entry, this, HttpStatus.CONFLICT);
         }
     }

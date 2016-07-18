@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 
 @Service
-class MapA extends  HashMap<String, String>{
+class MapA extends HashMap<String, String> {
 
     @Autowired
-    Hasher hasher;
+    private Hasher hasher;
 
     String put(String entry) {
-        String key = hasher.hashAndEncode(entry);
+        String key = hasher.hash(entry);
         put(key, entry);
         return key;
     }

@@ -32,7 +32,7 @@ public class ControllerTest {
     @Autowired
     MerkleTree tree;
 
-    private static final String FOO_HASH = "LCa0a2j_xo_5m0U8HTBBNBNCLXBkg7-g-YpeiGJm564";
+    private static final String FOO_HASH = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";
 
     private MockMvc mockMvc;
 
