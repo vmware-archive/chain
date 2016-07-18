@@ -1,10 +1,7 @@
 package io.pivotal.cf.chain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.pivotal.cf.chain.domain.AbstractChain;
-import io.pivotal.cf.chain.domain.Chainable;
-import io.pivotal.cf.chain.domain.Leaf;
-import io.pivotal.cf.chain.domain.VerificationException;
+import io.pivotal.cf.chain.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +28,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ContextConfiguration(classes = {Application.class})
 @WebAppConfiguration
 public class ControllerTest {
+
+    @Autowired
+    MerkleTree tree;
 
     private static final String FOO_HASH = "LCa0a2j_xo_5m0U8HTBBNBNCLXBkg7-g-YpeiGJm564";
 
@@ -157,7 +157,7 @@ public class ControllerTest {
         String s = result7.getResponse().getContentAsString();
         assertNotNull(s);
 
-        Chainable c = AbstractChain.load(s);
+        Chainable c = tree.load(s);
         assertNotNull(c);
         assertEquals(FOO_HASH, c.get(content).getHash());
         assertTrue(c.size() == 1);
@@ -178,7 +178,7 @@ public class ControllerTest {
                 .andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         s = result8.getResponse().getContentAsString();
-        c = AbstractChain.load(s);
+        c = tree.load(s);
         assertNotNull(c);
         assertEquals(5, c.size());
 
@@ -238,7 +238,7 @@ public class ControllerTest {
         String s = result7.getResponse().getContentAsString();
         assertNotNull(s);
 
-        Chainable c = AbstractChain.load(s);
+        Chainable c = tree.load(s);
         assertNotNull(c);
         assertEquals(6, c.size());
 

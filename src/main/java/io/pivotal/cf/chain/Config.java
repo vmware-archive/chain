@@ -9,12 +9,17 @@ import org.springframework.context.annotation.Configuration;
 public class Config {
 
     @Bean
-    public MerkleTree tree() {
-        return new MerkleTree();
+    public MerkleTree tree(Hasher hasher) {
+        return new MerkleTree(hasher);
     }
 
     @Bean
-    public Chain chain() {
-        return new Chain();
+    public Chain chain(Hasher hasher) {
+        return new Chain(hasher);
+    }
+
+    @Bean
+    Hasher hasher() {
+        return new Hasher();
     }
 }

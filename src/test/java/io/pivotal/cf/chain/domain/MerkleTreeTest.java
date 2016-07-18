@@ -1,6 +1,7 @@
 package io.pivotal.cf.chain.domain;
 
 import io.pivotal.cf.chain.Application;
+import io.pivotal.cf.chain.Hasher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class MerkleTreeTest {
 
     @Autowired
     private MerkleTree tree;
+
+    @Autowired
+    Hasher hasher;
 
     private static final String ENTRY_1 = "test 1";
     private static final String ENTRY_2 = "test 2";
@@ -186,7 +190,7 @@ public class MerkleTreeTest {
     @Test
     public void testImport() throws IOException {
         try {
-            Chainable c = AbstractChain.load(getContents("valid.json"));
+            Chainable c = tree.load(getContents("valid.json"));
             assertNotNull(c.getHash());
             c.verify();
         } catch (VerificationException e) {
@@ -194,7 +198,7 @@ public class MerkleTreeTest {
         }
 
         try {
-            Chainable c = AbstractChain.load(getContents("invalidLeaf.json"));
+            Chainable c = tree.load(getContents("invalidLeaf.json"));
             assertNotNull(c.getHash());
             c.verify();
             fail("should have thrown an exception.");
@@ -204,7 +208,7 @@ public class MerkleTreeTest {
         }
 
         try {
-            Chainable c = AbstractChain.load(getContents("invalidNode.json"));
+            Chainable c = tree.load(getContents("invalidNode.json"));
             assertNotNull(c.getHash());
             c.verify();
             fail("should have thrown an exception.");

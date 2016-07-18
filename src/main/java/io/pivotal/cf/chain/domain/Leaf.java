@@ -50,12 +50,12 @@ public class Leaf extends Child {
         return "Leaf:key=" + getKey() + ",hash=" + getHash();
     }
 
-    public void verify(String entry) throws VerificationException {
+    public void verify(String entry, Hasher hasher) throws VerificationException {
         if (getHash() == null || entry == null) {
             throw new VerificationException("unable to verify: null entry or hash encountered", this, HttpStatus.BAD_REQUEST);
         }
 
-        if (!getHash().equals(Hasher.hashAndEncode(entry))) {
+        if (!getHash().equals(hasher.hashAndEncode(entry))) {
             throw new VerificationException("hash mismatch for entry: " + entry, this, HttpStatus.CONFLICT);
         }
     }

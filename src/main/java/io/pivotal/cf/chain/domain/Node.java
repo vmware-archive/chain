@@ -80,21 +80,21 @@ public class Node extends Child {
         return s;
     }
 
-    void rehash() {
+    void rehash(Hasher hasher) {
         //if node has no sibling, just inherit child hash
         if (getRight() == null) {
             setHash(getLeft().getHash());
         } else {
             //set hash to the hash of the concatenated child hashes
-            setHash(concatHash());
+            setHash(concatHash(hasher));
         }
     }
 
-    private String concatHash() {
-        return Hasher.hashAndEncode(getLeft().getHash() + getRight().getHash());
+    private String concatHash(Hasher hasher) {
+        return hasher.hashAndEncode(getLeft().getHash() + getRight().getHash());
     }
 
-    public void verify() throws VerificationException {
+    public void verify(Hasher hasher) throws VerificationException {
         if (getLeft() == null && getRight() == null && getHash() == null) {
             return;
         }
@@ -107,7 +107,7 @@ public class Node extends Child {
             }
         }
 
-        if (!concatHash().equals(getHash())) {
+        if (!concatHash(hasher).equals(getHash())) {
             throw new VerificationException("hash concatenation verification failed.", this, HttpStatus.I_AM_A_TEAPOT);
         }
     }

@@ -7,9 +7,13 @@ import io.pivotal.cf.chain.Hasher;
 @JsonPropertyOrder({"hash", "size", "levels", "root"})
 public class MerkleTree extends AbstractChain {
 
+    public MerkleTree(Hasher hasher) {
+        super(hasher);
+    }
+
     public String addEntry(String entry) {
         //create a leaf for the entry
-        Leaf leaf = new Leaf(Hasher.createId(), Hasher.hashAndEncode(entry));
+        Leaf leaf = new Leaf(getHasher().createId(), getHasher().hashAndEncode(entry));
 
         //add the leaf to the tree
         addLeaf(leaf);
@@ -92,7 +96,7 @@ public class MerkleTree extends AbstractChain {
 
     public void loadRandomEntries(int numberOfEntries) {
         for (int i = 0; i < numberOfEntries; i++) {
-            addEntry(Hasher.createId());
+            addEntry(getHasher().createId());
         }
     }
 
@@ -116,4 +120,5 @@ public class MerkleTree extends AbstractChain {
     char[] calcPath(int size) {
         return Integer.toBinaryString(size).toCharArray();
     }
+
 }

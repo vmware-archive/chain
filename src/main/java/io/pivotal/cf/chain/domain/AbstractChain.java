@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import io.pivotal.cf.chain.Hasher;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
@@ -15,9 +16,16 @@ import java.util.Map;
 
 public abstract class AbstractChain implements Chainable {
 
+    private Hasher hasher;
+
     private final Map<String, Leaf> leaves = new HashMap<>();
 
     private Node root = new Node();
+
+    AbstractChain(Hasher hasher) {
+        super();
+        setHasher(hasher);
+    }
 
     public void clear() {
         leaves.clear();
@@ -48,7 +56,7 @@ public abstract class AbstractChain implements Chainable {
     }
 
     private void rehash(Node node) {
-        node.rehash();
+        node.rehash(getHasher());
 
         if (!getRoot().equals(node)) {
             //keep going if we are not at the root yet
@@ -79,7 +87,7 @@ public abstract class AbstractChain implements Chainable {
     private void verifyToRoot(Leaf l) throws VerificationException {
         Node parent = l.getParent();
         while (parent != null) {
-            parent.verify();
+            parent.verify(getHasher());
             parent = parent.getParent();
         }
     }
@@ -95,7 +103,7 @@ public abstract class AbstractChain implements Chainable {
             throw new VerificationException("no entry found for key: " + key, HttpStatus.NOT_FOUND);
         }
 
-        leaf.verify(entry);
+        leaf.verify(entry, getHasher());
         verifyToRoot(leaf);
     }
 
@@ -103,7 +111,15 @@ public abstract class AbstractChain implements Chainable {
         return leaves.get(key);
     }
 
-    public static Chainable load(String json) throws IOException {
+    protected Hasher getHasher() {
+        return hasher;
+    }
+
+    private void setHasher(Hasher hasher) {
+        this.hasher = hasher;
+    }
+
+    public Chainable load(String json) throws IOException {
         SimpleModule module = new SimpleModule();
 
         LeafTranslator ld = new LeafTranslator();
@@ -120,7 +136,7 @@ public abstract class AbstractChain implements Chainable {
         jp.setCodec(mapper);
         TreeNode jsonNode = jp.readValueAsTree().get("root");
 
-        MerkleTree mt = new MerkleTree();
+        MerkleTree mt = new MerkleTree(getHasher());
         mt.setRoot((Node) mapper.readValue(jsonNode.toString(), Child.class));
         mt.getLeaves().putAll(ld.leaves);
         return mt;
