@@ -8,7 +8,7 @@ public interface Chainable {
 
     void clear();
 
-    int size();
+    int leaves();
 
     Leaf get(String key);
 

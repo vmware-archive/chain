@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.pivotal.cf.chain.Hasher;
 
-@JsonPropertyOrder({"hash", "size", "levels", "root"})
+@JsonPropertyOrder({"hash", "leaves", "height", "root"})
 public class MerkleTree extends AbstractChain {
 
     public MerkleTree(Hasher hasher) {
@@ -25,7 +25,7 @@ public class MerkleTree extends AbstractChain {
     }
 
     private void addLeaf(Leaf l) {
-        char[] path = calcPath(size());
+        char[] path = calcPath(leaves());
         buildPath(path);
         addLeaf(path, l);
     }
@@ -33,7 +33,7 @@ public class MerkleTree extends AbstractChain {
     private void addLeaf(char[] path, Leaf l) {
         Node parent = getRoot();
 
-        if (size() > 0) {
+        if (leaves() > 0) {
             for (char c : path) {
                 if (c == '0') {
                     parent = (Node) parent.getLeft();
@@ -54,7 +54,7 @@ public class MerkleTree extends AbstractChain {
 
     private void buildPath(char[] path) {
         //special case: no entries yet, the root  will be the parent
-        if (size() < 1) {
+        if (leaves() < 1) {
             return;
         }
 
@@ -91,7 +91,7 @@ public class MerkleTree extends AbstractChain {
     }
 
     private boolean treeIsFull() {
-        return isPowerOf2(size());
+        return isPowerOf2(leaves());
     }
 
     public void loadRandomEntries(int numberOfEntries) {
@@ -105,20 +105,20 @@ public class MerkleTree extends AbstractChain {
     }
 
     @JsonProperty
-    int levels() {
-        if (size() <= 0) {
+    int height() {
+        if (leaves() <= 0) {
             return 0;
         }
 
         //calculate base2 log
-        double d = Math.log(size()) / Math.log(2);
+        double d = Math.log(leaves()) / Math.log(2);
 
         //round up to next whole number
         return (int) Math.ceil(d);
     }
 
-    char[] calcPath(int size) {
-        return Integer.toBinaryString(size).toCharArray();
+    char[] calcPath(int leaves) {
+        return Integer.toBinaryString(leaves).toCharArray();
     }
 
 }

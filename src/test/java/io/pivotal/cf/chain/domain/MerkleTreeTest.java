@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -134,22 +133,22 @@ public class MerkleTreeTest {
     public void testLevels() {
         tree.clear();
 
-        assertEquals(0, tree.levels());
+        assertEquals(0, tree.height());
 
         tree.addEntry("1");
-        assertEquals(0, tree.levels());
+        assertEquals(0, tree.height());
 
         tree.addEntry("2");
-        assertEquals(1, tree.levels());
+        assertEquals(1, tree.height());
 
         tree.addEntry("3");
-        assertEquals(2, tree.levels());
+        assertEquals(2, tree.height());
 
         tree.addEntry("4");
-        assertEquals(2, tree.levels());
+        assertEquals(2, tree.height());
 
         tree.addEntry("5");
-        assertEquals(3, tree.levels());
+        assertEquals(3, tree.height());
     }
 
     @Test

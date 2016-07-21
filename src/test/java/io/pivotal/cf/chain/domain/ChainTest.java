@@ -25,7 +25,7 @@ public class ChainTest {
     @Test
     public void testChain() {
         chain.clear();
-        assertTrue(chain.size() == 0);
+        assertTrue(chain.leaves() == 0);
 
         merkleTree.loadRandomEntries(10);
         chain.addBlock(merkleTree);
@@ -36,7 +36,7 @@ public class ChainTest {
             fail("should not have thrown an exception.");
         }
 
-        assertTrue(chain.size() == 10);
+        assertTrue(chain.leaves() == 10);
 
         merkleTree.loadRandomEntries(15);
         chain.addBlock(merkleTree);
@@ -47,6 +47,6 @@ public class ChainTest {
             fail("should not have thrown an exception.");
         }
 
-        assertTrue(chain.size() == 25);
+        assertTrue(chain.leaves() == 25);
     }
 }

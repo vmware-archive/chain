@@ -45,7 +45,7 @@ public abstract class AbstractChain implements Chainable {
     }
 
     @JsonProperty
-    public int size() {
+    public int leaves() {
         return leaves.size();
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractChain implements Chainable {
 
     //not exactly the most efficient way to do this.....
     public void verify() throws VerificationException {
-        if (size() <= 1) {
+        if (leaves() <= 1) {
             return;
         }
 

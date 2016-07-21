@@ -3,7 +3,7 @@ package io.pivotal.cf.chain.domain;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.pivotal.cf.chain.Hasher;
 
-@JsonPropertyOrder({"hash", "size", "root"})
+@JsonPropertyOrder({"hash", "leaves", "root"})
 public class Chain extends AbstractChain {
 
     public Chain(Hasher hasher) {
@@ -11,7 +11,7 @@ public class Chain extends AbstractChain {
     }
 
     public void addBlock(MerkleTree tree) {
-        if (size() == 0) {
+        if (leaves() == 0) {
             setRoot(tree.getRoot());
         } else {
             Node newRoot = new Node();

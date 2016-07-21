@@ -160,7 +160,7 @@ public class ControllerTest {
         Chainable c = tree.load(s);
         assertNotNull(c);
         assertEquals(FOO_HASH, c.get(content).getHash());
-        assertTrue(c.size() == 1);
+        assertTrue(c.leaves() == 1);
 
         try {
             c.verify();
@@ -180,7 +180,7 @@ public class ControllerTest {
         s = result8.getResponse().getContentAsString();
         c = tree.load(s);
         assertNotNull(c);
-        assertEquals(5, c.size());
+        assertEquals(5, c.leaves());
 
         try {
             c.verify();
@@ -240,7 +240,7 @@ public class ControllerTest {
 
         Chainable c = tree.load(s);
         assertNotNull(c);
-        assertEquals(6, c.size());
+        assertEquals(6, c.leaves());
 
         try {
             c.verify();
