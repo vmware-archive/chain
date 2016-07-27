@@ -36,7 +36,7 @@ public class MerkleTreeTest {
     private static final String ENTRY_4 = "test 4";
 
     @Test
-    public void testTree() {
+    public void testTree() throws VerificationException {
         tree.clear();
 
         try {
@@ -130,7 +130,25 @@ public class MerkleTreeTest {
     }
 
     @Test
-    public void testLevels() {
+    public void testLoadToManyEntries() {
+        tree.clear();
+        try {
+            tree.loadRandomEntries(MerkleTree.MAX_MERKLE_ENTRIES);
+        } catch (VerificationException e) {
+            fail("should not have thrown an exception.");
+        }
+
+        try {
+            tree.loadRandomEntries(1);
+        } catch (VerificationException e) {
+            //expected
+        }
+
+        tree.clear();
+    }
+
+    @Test
+    public void testLevels() throws VerificationException {
         tree.clear();
 
         assertEquals(0, tree.height());
@@ -152,7 +170,7 @@ public class MerkleTreeTest {
     }
 
     @Test
-    public void testValidation() {
+    public void testValidation() throws VerificationException {
         tree.clear();
         List<String> entries = new ArrayList<>();
         for (int i = 0; i < 100; i++) {

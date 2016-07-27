@@ -79,7 +79,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/add/{entry}")
-    public ResponseEntity<String> addMerkleEntry(@PathVariable String entry) {
+    public ResponseEntity<String> addMerkleEntry(@PathVariable String entry) throws VerificationException {
         return new ResponseEntity<>(merkleTree.addEntry(entry), httpHeaders(), HttpStatus.CREATED);
     }
 
@@ -109,7 +109,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/merkleTree/load/{numberOfEntries}")
-    public ResponseEntity<MerkleTree> merkleLoad(@PathVariable String numberOfEntries) {
+    public ResponseEntity<MerkleTree> merkleLoad(@PathVariable String numberOfEntries) throws VerificationException {
         int i = 0;
         try {
             i = Integer.parseInt(numberOfEntries);
@@ -127,7 +127,7 @@ public class Controller {
     }
 
     @RequestMapping(value = "/chain/addBlock")
-    public ResponseEntity<Chain> addChainBlock() {
+    public ResponseEntity<Chain> addChainBlock() throws VerificationException {
         chain.addBlock(merkleTree);
         merkleTree.clear();
         return new ResponseEntity<>(chain, httpHeaders(), HttpStatus.CREATED);

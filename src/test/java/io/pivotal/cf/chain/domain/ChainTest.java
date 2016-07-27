@@ -23,7 +23,7 @@ public class ChainTest {
     private MerkleTree merkleTree;
 
     @Test
-    public void testChain() {
+    public void testChain() throws VerificationException {
         chain.clear();
         assertTrue(chain.leaves() == 0);
 
@@ -48,5 +48,30 @@ public class ChainTest {
         }
 
         assertTrue(chain.leaves() == 25);
+    }
+
+    @Test
+    public void testLoadToManyEntries() {
+        merkleTree.clear();
+        chain.clear();
+        try {
+            for (int i = 0; i < 5; i++) {
+                merkleTree.loadRandomEntries(MerkleTree.MAX_MERKLE_ENTRIES);
+                chain.addBlock(merkleTree);
+                merkleTree.clear();
+            }
+        } catch (VerificationException e) {
+            fail("should not have thrown an exception.");
+        }
+
+        try {
+            merkleTree.loadRandomEntries(1);
+            chain.addBlock(merkleTree);
+        } catch (VerificationException e) {
+            //expected
+        }
+
+        merkleTree.clear();
+        chain.clear();
     }
 }

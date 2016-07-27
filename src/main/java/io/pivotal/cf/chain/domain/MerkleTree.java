@@ -3,6 +3,7 @@ package io.pivotal.cf.chain.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.pivotal.cf.chain.Hasher;
+import org.springframework.http.HttpStatus;
 
 @JsonPropertyOrder({"hash", "leaves", "height", "root"})
 public class MerkleTree extends AbstractChain {
@@ -11,7 +12,11 @@ public class MerkleTree extends AbstractChain {
         super(hasher);
     }
 
-    public String addEntry(String entry) {
+    public String addEntry(String entry) throws VerificationException {
+        if(leaves() >= MAX_MERKLE_ENTRIES) {
+            throw new VerificationException("tree max size: " + MAX_MERKLE_ENTRIES + " reached.", HttpStatus.INSUFFICIENT_STORAGE);
+        }
+
         //create a leaf for the entry
         Leaf leaf = new Leaf(getHasher().createId(), getHasher().hash(entry));
 
@@ -94,7 +99,7 @@ public class MerkleTree extends AbstractChain {
         return isPowerOf2(leaves());
     }
 
-    public void loadRandomEntries(int numberOfEntries) {
+    public void loadRandomEntries(int numberOfEntries) throws VerificationException {
         for (int i = 0; i < numberOfEntries; i++) {
             addEntry(getHasher().createId());
         }

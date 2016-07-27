@@ -16,6 +16,10 @@ import java.util.Map;
 
 public abstract class AbstractChain implements Chainable {
 
+    // artificially limiting the number of entries to keep the demo resource usage sane
+    static final int MAX_CHAIN_ENTRIES = 50000;
+    static final int MAX_MERKLE_ENTRIES = 10000;
+
     private Hasher hasher;
 
     private final Map<String, Leaf> leaves = new HashMap<>();
