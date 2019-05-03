@@ -1,15 +1,13 @@
 package io.pivotal.cf.chain.domain;
 
-import io.pivotal.cf.chain.Application;
 import io.pivotal.cf.chain.Hasher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,9 +17,8 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
+@SpringBootTest
+@RunWith(SpringRunner.class)
 public class MerkleTreeTest {
 
     @Autowired
