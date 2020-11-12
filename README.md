@@ -1,3 +1,5 @@
+# chain is no longer actively maintained by VMware.
+
 # chain
 
 Application to demonstrate technologies underlying blockchains.
